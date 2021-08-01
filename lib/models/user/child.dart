@@ -8,7 +8,7 @@ String childToJson(Child data) => json.encode(data.toJson());
 
 class Child extends CustomUser {
   Child({
-    required this.transactionLimit,
+    this.pocketMoneyDetails,
     required this.balance,
     required this.paymentPermissionRequired,
     required this.parentId,
@@ -29,13 +29,13 @@ class Child extends CustomUser {
 
   final String parentId;
   final bool paymentPermissionRequired;
-  final double transactionLimit;
+  final PocketMoneyDetails? pocketMoneyDetails;
   final double balance;
 
   Child copyWith({
     String? parentId,
     bool? paymentPermissionRequired,
-    double? transactionLimit,
+    PocketMoneyDetails? pocketMoneyDetails,
     double? balance,
     String? userId,
     int? createdDate,
@@ -46,9 +46,9 @@ class Child extends CustomUser {
   }) =>
       Child(
         parentId: parentId ?? this.parentId,
+        pocketMoneyDetails: pocketMoneyDetails ?? this.pocketMoneyDetails,
         paymentPermissionRequired:
             paymentPermissionRequired ?? this.paymentPermissionRequired,
-        transactionLimit: transactionLimit ?? this.transactionLimit,
         balance: balance ?? this.balance,
         userId: userId ?? this.userId,
         createdDate: createdDate ?? this.createdDate,
@@ -63,9 +63,9 @@ class Child extends CustomUser {
         paymentPermissionRequired: json["payment_permission_required"] == null
             ? null
             : json["payment_permission_required"],
-        transactionLimit: json["transaction_limit"] == null
+        pocketMoneyDetails: json["pocket_money_details"] == null
             ? null
-            : json["transaction_limit"].toDouble(),
+            : pocketMoneyDetailsFromJson(json["pocket_money_details"]),
         balance: json["balance"] == null ? null : json["balance"].toDouble(),
         userId: json["user_id"] == null ? null : json["user_id"],
         createdDate: json["created_date"] == null ? null : json["created_date"],
@@ -79,7 +79,9 @@ class Child extends CustomUser {
   Map<String, dynamic> toJson() => {
         "parent_id": parentId,
         "payment_permission_required": paymentPermissionRequired,
-        "transaction_limit": transactionLimit,
+        "pocket_money_details": pocketMoneyDetails == null
+            ? null
+            : pocketMoneyDetailsToJson(pocketMoneyDetails!),
         "balance": balance,
         "user_id": userId,
         "created_date": createdDate,
@@ -87,5 +89,41 @@ class Child extends CustomUser {
         "is_parent": isParent,
         "username": username,
         "email": email,
+      };
+}
+
+PocketMoneyDetails pocketMoneyDetailsFromJson(String str) =>
+    PocketMoneyDetails.fromJson(json.decode(str));
+
+String pocketMoneyDetailsToJson(PocketMoneyDetails data) =>
+    json.encode(data.toJson());
+
+class PocketMoneyDetails {
+  PocketMoneyDetails({
+    required this.lastAdded,
+    required this.pocketMoneyPlanId,
+  });
+
+  final int lastAdded;
+  final String pocketMoneyPlanId;
+
+  PocketMoneyDetails copyWith({
+    int? lastAdded,
+    String? pocketMoneyPlanId,
+  }) =>
+      PocketMoneyDetails(
+        lastAdded: lastAdded ?? this.lastAdded,
+        pocketMoneyPlanId: pocketMoneyPlanId ?? this.pocketMoneyPlanId,
+      );
+
+  factory PocketMoneyDetails.fromJson(Map<String, dynamic> json) =>
+      PocketMoneyDetails(
+        lastAdded: json["last_added"],
+        pocketMoneyPlanId: json["pocket_money_plan_id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "last_added": lastAdded,
+        "pocket_money_plan_id": pocketMoneyPlanId,
       };
 }

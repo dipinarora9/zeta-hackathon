@@ -12,11 +12,13 @@ class Transaction {
     required this.timestamp,
     required this.sender,
     required this.receiver,
+    required this.accountHolderId,
   });
 
   final String transactionId;
   final double amount;
   final int timestamp;
+  final String accountHolderId;
   final UserObject sender;
   final UserObject receiver;
 
@@ -26,6 +28,7 @@ class Transaction {
     int? timestamp,
     UserObject? sender,
     UserObject? receiver,
+    String? accountHolderId,
   }) =>
       Transaction(
         transactionId: transactionId ?? this.transactionId,
@@ -33,6 +36,7 @@ class Transaction {
         timestamp: timestamp ?? this.timestamp,
         sender: sender ?? this.sender,
         receiver: receiver ?? this.receiver,
+        accountHolderId: accountHolderId ?? this.accountHolderId,
       );
 
   factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
@@ -41,12 +45,14 @@ class Transaction {
         timestamp: json["timestamp"],
         sender: UserObject.fromJson(json["sender"]),
         receiver: UserObject.fromJson(json["receiver"]),
+        accountHolderId: json["account_holder_id"],
       );
 
   Map<String, dynamic> toJson() => {
         "transaction_id": transactionId,
         "amount": amount,
         "timestamp": timestamp,
+        "account_holder_id": accountHolderId,
         "sender": sender.toJson(),
         "receiver": receiver.toJson(),
       };
