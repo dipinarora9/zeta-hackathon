@@ -100,11 +100,11 @@ String pocketMoneyDetailsToJson(PocketMoneyDetails data) =>
 
 class PocketMoneyDetails {
   PocketMoneyDetails({
-    required this.lastAdded,
+    required this.renewalDate,
     required this.pocketMoneyPlanId,
   });
 
-  final int lastAdded;
+  final int renewalDate;
   final String pocketMoneyPlanId;
 
   PocketMoneyDetails copyWith({
@@ -112,18 +112,18 @@ class PocketMoneyDetails {
     String? pocketMoneyPlanId,
   }) =>
       PocketMoneyDetails(
-        lastAdded: lastAdded ?? this.lastAdded,
+        renewalDate: lastAdded ?? this.renewalDate,
         pocketMoneyPlanId: pocketMoneyPlanId ?? this.pocketMoneyPlanId,
       );
 
   factory PocketMoneyDetails.fromJson(Map<String, dynamic> json) =>
       PocketMoneyDetails(
-        lastAdded: json["last_added"],
+        renewalDate: json["renewal_date"],
         pocketMoneyPlanId: json["pocket_money_plan_id"],
       );
 
   Map<String, dynamic> toJson() => {
-        "last_added": lastAdded,
+        "renewal_date": renewalDate,
         "pocket_money_plan_id": pocketMoneyPlanId,
       };
 }
