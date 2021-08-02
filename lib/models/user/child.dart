@@ -108,11 +108,11 @@ class PocketMoneyDetails {
   final String pocketMoneyPlanId;
 
   PocketMoneyDetails copyWith({
-    int? lastAdded,
+    int? renewalDate,
     String? pocketMoneyPlanId,
   }) =>
       PocketMoneyDetails(
-        renewalDate: lastAdded ?? this.renewalDate,
+        renewalDate: renewalDate ?? this.renewalDate,
         pocketMoneyPlanId: pocketMoneyPlanId ?? this.pocketMoneyPlanId,
       );
 
