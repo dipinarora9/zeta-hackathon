@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.zeta_hackathon">
    <application
-        android:label="zeta_hackathon"
+        android:label="Zeta Hackathon"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
