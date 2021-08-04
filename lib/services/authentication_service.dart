@@ -1,9 +1,47 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:zeta_hackathon/helpers/app_response.dart';
+import 'package:zeta_hackathon/models/user/child.dart';
+
 class AuthenticationService {
-  loginAsParent() {}
+  Future<AppResponse<bool>> loginAsParent() async {
+    try {
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
 
-  loginAsChild() {}
+  Future<AppResponse<bool>> loginAsChild(String email) async {
+    try {
+      // FirebaseAuth.instance.signInWithEmailLink(email: email, emailLink: emailLink);
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
 
-  signUp() {}
+  Future<AppResponse<bool>> signUp(String email, String password) async {
+    try {
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
 
-  sendLoginLinkToChild() {}
+  Future<AppResponse<bool>> sendLoginLinkToChild(Child child) async {
+    try {
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
 }
