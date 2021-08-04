@@ -4,9 +4,14 @@ class CustomScaffold extends StatelessWidget {
   final Widget body;
   final String title;
   final List<Widget>? actions;
+  final bool showBackButton;
 
   const CustomScaffold(
-      {Key? key, required this.title, required this.body, this.actions})
+      {Key? key,
+      required this.title,
+      required this.body,
+      this.actions,
+      this.showBackButton = true})
       : super(key: key);
 
   @override
@@ -14,11 +19,13 @@ class CustomScaffold extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: actions,
-        leading: IconButton(
-          color: Colors.black,
-          icon: Icon(Icons.chevron_left),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: showBackButton
+            ? IconButton(
+                color: Colors.black,
+                icon: Icon(Icons.chevron_left),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
         title: Text(
           title,
           style: TextStyle(color: Colors.black),
