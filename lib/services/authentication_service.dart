@@ -1,4 +1,3 @@
-
 class AuthenticationService {
   loginAsParent() {}
 
