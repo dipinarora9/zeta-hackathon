@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomScaffold extends StatelessWidget {
   final Widget body;
+  final Widget? floatingActionButton;
   final String title;
   final List<Widget>? actions;
   final bool showBackButton;
@@ -11,6 +12,7 @@ class CustomScaffold extends StatelessWidget {
       required this.title,
       required this.body,
       this.actions,
+      this.floatingActionButton,
       this.showBackButton = true})
       : super(key: key);
 
@@ -43,6 +45,7 @@ class CustomScaffold extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

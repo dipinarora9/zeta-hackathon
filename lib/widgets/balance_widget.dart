@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AnalyticsWidget extends StatelessWidget {
-  const AnalyticsWidget({Key? key}) : super(key: key);
+class BalanceWidget extends StatelessWidget {
+  const BalanceWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

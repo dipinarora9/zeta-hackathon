@@ -4,7 +4,10 @@ import 'package:zeta_hackathon/models/user/child.dart';
 import './database_service.dart';
 
 class TransactionService {
-  final DatabaseService databaseService = DatabaseService();
+  final DatabaseService databaseService;
+
+  TransactionService(this.databaseService);
+
   createTransaction(Transaction transaction, Child child) {
     try {
       if (child.balance >= transaction.amount) {

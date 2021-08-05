@@ -12,41 +12,39 @@ class InitialScreen extends StatelessWidget {
     return CustomScaffold(
       title: '',
       showBackButton: false,
-      body: Center(
-        child: Column(
-          children: [
-            CustomButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ParentLogin(),
-                  ),
-                );
-              },
-              text: 'Parent',
-            ),
-            CustomButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ChildLogin(),
-                  ),
-                );
-              },
-              text: 'Child',
-            ),
-            CustomButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ParentLogin(),
-                  ),
-                );
-              },
-              text: 'New user? Sign Up',
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          CustomButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ParentLogin(),
+                ),
+              );
+            },
+            text: 'Parent',
+          ),
+          CustomButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ChildLogin(),
+                ),
+              );
+            },
+            text: 'Child',
+          ),
+          CustomButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ParentLogin(),
+                ),
+              );
+            },
+            text: 'New user? Sign Up',
+          ),
+        ],
       ),
     );
   }

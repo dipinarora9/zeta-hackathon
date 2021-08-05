@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:zeta_hackathon/widgets/analytics_widget.dart';
-import 'package:zeta_hackathon/widgets/child_widget.dart';
+import 'package:zeta_hackathon/widgets/balance_widget.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
-class HomepageScreen extends StatelessWidget {
-  const HomepageScreen({Key? key}) : super(key: key);
+class ChildHomepageScreen extends StatelessWidget {
+  const ChildHomepageScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,16 +12,14 @@ class HomepageScreen extends StatelessWidget {
       title: 'Homepage',
       body: Column(
         children: [
+          BalanceWidget(),
           AnalyticsWidget(),
-          childrenWidget(),
         ],
       ),
-    );
-  }
-
-  Widget childrenWidget() {
-    return ListView.builder(
-      itemBuilder: (context, index) => ChildWidget(),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        label: Text('Scan QR'),
+      ),
     );
   }
 }

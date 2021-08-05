@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:zeta_hackathon/routes.dart';
 
 import 'screens/initial_screen.dart';
 
@@ -19,6 +20,8 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: InitialScreen(),
+      initialRoute: '/',
+      onGenerateRoute: (s) => Routes.generateRoutes(s),
     );
   }
 }

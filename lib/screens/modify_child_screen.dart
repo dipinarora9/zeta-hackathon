@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AnalyticsWidget extends StatelessWidget {
-  const AnalyticsWidget({Key? key}) : super(key: key);
+class ModifyChildScreen extends StatelessWidget {
+  const ModifyChildScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
