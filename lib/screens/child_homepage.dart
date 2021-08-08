@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zeta_hackathon/routes.dart';
 import 'package:zeta_hackathon/widgets/analytics_widget.dart';
 import 'package:zeta_hackathon/widgets/balance_widget.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
@@ -17,7 +18,8 @@ class ChildHomepageScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () =>
+            Navigator.of(context).pushNamed(Routes.transactionScreen),
         label: Text('Scan QR'),
       ),
     );

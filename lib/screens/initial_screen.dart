@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zeta_hackathon/screens/authentication/child_login.dart';
-import 'package:zeta_hackathon/screens/authentication/parent_login.dart';
 import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
+
+import '../routes.dart';
 
 class InitialScreen extends StatelessWidget {
   const InitialScreen({Key? key}) : super(key: key);
@@ -13,35 +13,19 @@ class InitialScreen extends StatelessWidget {
       title: '',
       showBackButton: false,
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CustomButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ParentLogin(),
-                ),
-              );
-            },
+            onPressed: () =>
+                Navigator.of(context).pushNamed(Routes.loginParent),
             text: 'Parent',
           ),
           CustomButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ChildLogin(),
-                ),
-              );
-            },
+            onPressed: () => Navigator.of(context).pushNamed(Routes.loginChild),
             text: 'Child',
           ),
           CustomButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ParentLogin(),
-                ),
-              );
-            },
+            onPressed: () => Navigator.of(context).pushNamed(Routes.signUp),
             text: 'New user? Sign Up',
           ),
         ],

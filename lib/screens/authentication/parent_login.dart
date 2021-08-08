@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
+import '../../routes.dart';
+
 class ParentLogin extends StatelessWidget {
   const ParentLogin({Key? key}) : super(key: key);
 
@@ -25,8 +27,15 @@ class ParentLogin extends StatelessWidget {
                 decoration: InputDecoration(labelText: 'Password'),
               ),
             ),
-            CustomButton(onPressed: () {}, text: 'Login'),
-            CustomButton(onPressed: () {}, text: 'Sign Up'),
+            CustomButton(
+              onPressed: () => Navigator.of(context).pushNamed(Routes.homepage),
+              text: 'Login',
+            ),
+            CustomButton(
+              onPressed: () =>
+                  Navigator.of(context).pushReplacementNamed(Routes.signUp),
+              text: 'Sign Up',
+            ),
           ],
         ),
       ),

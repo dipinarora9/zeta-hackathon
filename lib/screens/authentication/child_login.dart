@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zeta_hackathon/routes.dart';
 import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
@@ -18,7 +19,11 @@ class ChildLogin extends StatelessWidget {
                 decoration: InputDecoration(labelText: 'Email'),
               ),
             ),
-            CustomButton(onPressed: () {}, text: 'Login'),
+            CustomButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(Routes.homepageChild),
+              text: 'Login',
+            ),
           ],
         ),
       ),

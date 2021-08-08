@@ -27,7 +27,7 @@ class CustomScaffold extends StatelessWidget {
                 icon: Icon(Icons.chevron_left),
                 onPressed: () => Navigator.of(context).pop(),
               )
-            : null,
+            : Container(),
         title: Text(
           title,
           style: TextStyle(color: Colors.black),
@@ -38,7 +38,10 @@ class CustomScaffold extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          child: body,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+            child: body,
+          ),
           constraints: BoxConstraints(
             minHeight: MediaQuery.of(context).size.height,
             maxWidth: 500,
