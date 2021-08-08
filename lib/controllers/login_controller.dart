@@ -6,5 +6,9 @@ class LoginController with ChangeNotifier {
 
   LoginController(this.authenticationService);
 
-  loginAsParent() {}
+  loginAsParent() {
+    authenticationService.loginAsParent();
+  }
+
+  loginAsChild() {}
 }

@@ -4,9 +4,12 @@ import 'package:zeta_hackathon/helpers/app_response.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
 
 class AuthenticationService {
-  Future<AppResponse<bool>> loginAsParent() async {
+  Future<AppResponse<String>> loginAsParent() async {
     try {
-      return AppResponse(data: true);
+      UserCredential credential =
+          await FirebaseAuth.instance.signInAnonymously();
+      if (credential.user == null) throw Exception("Could not log you in");
+      return AppResponse(data: credential.user!.uid);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
     } catch (e) {
