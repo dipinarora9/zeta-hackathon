@@ -24,7 +24,7 @@ Future<void> init() async {
   sl.registerFactory<ParentHomepageController>(
       () => ParentHomepageController());
   sl.registerFactoryParam<ChildrenController, Child, void>(
-      (p1, _) => ChildrenController(p1));
+      (p1, _) => ChildrenController(p1, sl<DatabaseService>()));
   sl.registerFactory<PocketMoneyPlanController>(
       () => PocketMoneyPlanController(sl<DatabaseService>())..initialize());
   sl.registerFactory<TransactionController>(() => TransactionController());
