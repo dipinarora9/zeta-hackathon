@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/models/user/custom_user.dart';
 
 Child childFromJson(String str) => Child.fromJson(json.decode(str));
@@ -90,6 +91,8 @@ class Child extends CustomUser {
         "username": username,
         "email": email,
       };
+
+  UserObject toUserObject() => UserObject(name: username, id: userId);
 }
 
 PocketMoneyDetails pocketMoneyDetailsFromJson(String str) =>

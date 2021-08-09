@@ -11,6 +11,7 @@ class DatabaseService {
             fromFirestore: (snapshot, _) => Parent.fromJson(snapshot.data()!),
             toFirestore: (parent, _) => parent.toJson(),
           );
+
   CollectionReference childCollection(String parentId) => parentCollection
       .doc(parentId)
       .collection('children')
@@ -18,6 +19,7 @@ class DatabaseService {
         fromFirestore: (snapshot, _) => Child.fromJson(snapshot.data()!),
         toFirestore: (child, _) => child.toJson(),
       );
+
   CollectionReference pocketMoneyCollection(String parentId) => parentCollection
       .doc(parentId)
       .collection('pocket_money_plans')
@@ -62,8 +64,21 @@ class DatabaseService {
     }
   }
 
-  Future<AppResponse<Map<String, Child>>> fetchChildDetails(
-      String parentId) async {
+  Future<AppResponse<Child>> fetchChildDetails(
+      String parentID, String childID) async {
+    try {
+      DocumentSnapshot snapshot =
+          await childCollection(parentID).doc(childID).get();
+      Child child = Child.fromJson(snapshot.data() as Map<String, dynamic>);
+      return AppResponse(data: child);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
+
+  Future<AppResponse<Map<String, Child>>> fetchChildren(String parentId) async {
     try {
       var snapshot = await childCollection(parentId).get();
       Map<String, Child> childData = Map();

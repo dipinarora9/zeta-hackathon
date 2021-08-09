@@ -10,5 +10,7 @@ class LoginController with ChangeNotifier {
     authenticationService.loginAsParent();
   }
 
-  loginAsChild() {}
+  loginAsChild() {
+    authenticationService.loginAsParent();
+  }
 }
