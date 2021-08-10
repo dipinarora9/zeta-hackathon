@@ -35,14 +35,18 @@ exports.pocketMoneyUpdater = functions.https.onRequest(async (request, response)
             console.log(getTimestamp(today));
             await db.collection('users').doc(userData.id).collection('children').doc(childData.user_id).set(childData);
         }
-        let childToGetMoneyNow = await db.collection('users').doc(userData.id).collection('children').orderBy('pocket_money_details.renewal_date').limit(1).get();
+        if (children.size > 0) {
+            let childToGetMoneyNow = await db.collection('users').doc(userData.id).collection('children').orderBy('pocket_money_details.renewal_date').limit(1).get();
 
-        //1628533600
-        childToGetMoneyNow = childToGetMoneyNow.docs[0].data();
+            if (childToGetMoneyNow.docs.length == 0)
+                continue;
+            //1628533600
+            childToGetMoneyNow = childToGetMoneyNow.docs[0].data();
 
-        const latest_renewal_date = childToGetMoneyNow.pocket_money_details.renewal_date;
-        console.log(latest_renewal_date);
-        await db.collection('users').doc(userData.id).update({ "latest_renewal_date": latest_renewal_date });
+            const latest_renewal_date = childToGetMoneyNow.pocket_money_details.renewal_date;
+            console.log(latest_renewal_date);
+            await db.collection('users').doc(userData.id).update({ "latest_renewal_date": latest_renewal_date });
+        }
     }
     functions.logger.info("Hello logs!", { structuredData: true });
     response.send("Updated");
