@@ -3,10 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:zeta_hackathon/helpers/app_response.dart';
 
 class AuthenticationService {
-  Future<AppResponse<String>> loginAsParent() async {
+  Future<AppResponse<String>> loginAsParent(
+      String email, String password) async {
     try {
-      UserCredential credential =
-          await FirebaseAuth.instance.signInAnonymously();
+      UserCredential credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       if (credential.user == null) throw Exception("Could not log you in");
       return AppResponse(data: credential.user!.uid);
     } on FirebaseException catch (e) {
@@ -43,7 +44,7 @@ class AuthenticationService {
   Future<AppResponse<String>> signUp(String email, String password) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+          .createUserWithEmailAndPassword(email: email, password: password);
       return AppResponse(data: userCredential.user!.uid);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);

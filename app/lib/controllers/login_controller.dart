@@ -13,10 +13,11 @@ class LoginController with ChangeNotifier {
         passwordController = TextEditingController();
 
   loginAsParent() {
-    authenticationService.loginAsParent();
+    authenticationService.loginAsParent(
+        emailController.text, passwordController.text);
   }
 
   loginAsChild() {
-    authenticationService.loginAsParent();
+    // authenticationService.log();
   }
 }

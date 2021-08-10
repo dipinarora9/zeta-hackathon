@@ -67,7 +67,7 @@ class SignUpScreen extends StatelessWidget {
             CustomButton(
               onPressed: () async {
                 await context.read<SignUpController>().signUp();
-                Navigator.of(context).pushNamed(Routes.homepage);
+                Navigator.of(context).pop();
               },
               text: 'Sign Up',
             ),
