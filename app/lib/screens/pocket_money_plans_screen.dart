@@ -8,10 +8,11 @@ class PocketMoneyPlanScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScaffold(
       title: 'Pocket Money Plans',
-      body: ListView.builder(
-        itemBuilder: (context, index) => PocketMoneyPlanScreen(),
-        itemCount: 1,
-      ),
+      body: Container(),
+      // body: ListView.builder(
+      //   itemBuilder: (context, index) => PocketMoneyPlanWidget(),
+      //   itemCount: 1,
+      // ),
     );
   }
 }

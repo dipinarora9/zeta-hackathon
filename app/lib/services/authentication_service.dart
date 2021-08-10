@@ -41,9 +41,11 @@ class AuthenticationService {
     }
   }
 
-  Future<AppResponse<bool>> signUp(String email, String password) async {
+  Future<AppResponse<String>> signUp(String email, String password) async {
     try {
-      return AppResponse(data: true);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInAnonymously();
+      return AppResponse(data: userCredential.user!.uid);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
     } catch (e) {
