@@ -4,8 +4,6 @@ import 'package:zeta_hackathon/controllers/signup_controller.dart';
 import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
-import '../../routes.dart';
-
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
