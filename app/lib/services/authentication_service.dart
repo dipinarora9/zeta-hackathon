@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:zeta_hackathon/helpers/app_response.dart';
-import 'package:zeta_hackathon/models/user/child.dart';
 
 class AuthenticationService {
   Future<AppResponse<String>> loginAsParent() async {
@@ -53,7 +52,7 @@ class AuthenticationService {
     }
   }
 
-  Future<AppResponse<bool>> sendLoginLinkToChild(Child child) async {
+  Future<AppResponse<bool>> sendLoginLinkToChild(String email) async {
     try {
       var acs = ActionCodeSettings(
           url: 'https://zetahackdipinprashant.page.link',
@@ -61,7 +60,7 @@ class AuthenticationService {
           androidPackageName: 'com.example.zeta_hackathon',
           androidMinimumVersion: '16');
       await FirebaseAuth.instance
-          .sendSignInLinkToEmail(email: child.email, actionCodeSettings: acs);
+          .sendSignInLinkToEmail(email: email, actionCodeSettings: acs);
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);

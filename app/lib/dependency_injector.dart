@@ -26,8 +26,9 @@ Future<void> init() async {
       ChildHomepageController(sl<DatabaseService>(), sl<IdentityService>()));
   sl.registerFactory<ParentHomepageController>(() => ParentHomepageController(
       sl<DatabaseService>(), sl<AnalyticsService>(), sl<IdentityService>()));
-  sl.registerFactoryParam<ChildrenController, Child, void>(
-      (p1, _) => ChildrenController(p1, sl<DatabaseService>()));
+  sl.registerFactoryParam<ChildrenController, Child, void>((p1, _) =>
+      ChildrenController(p1, sl<AuthenticationService>(), sl<DatabaseService>(),
+          sl<IdentityService>()));
   sl.registerFactory<PocketMoneyPlanController>(() =>
       PocketMoneyPlanController(sl<DatabaseService>(), sl<IdentityService>())
         ..initialize());

@@ -53,10 +53,12 @@ class DatabaseService {
     }
   }
 
-  Future<AppResponse<bool>> addChildDetails(Child child) async {
+  Future<AppResponse<String>> addChildDetails(Child child) async {
     try {
-      await childCollection(child.parentId).doc(child.userId).set(child);
-      return AppResponse(data: true);
+      var ref = await childCollection(child.parentId).add(child);
+      child = child.copyWith(userId: ref.id);
+      await childCollection(child.parentId).add(child);
+      return AppResponse(data: ref.id);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
     } catch (e) {
