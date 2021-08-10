@@ -9,7 +9,20 @@ class PocketMoneyPlanWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: Text(r"$ " + plan.amount.toString()),
-      children: [],
+      children: [
+        Row(
+          children: [
+            Text('Amount'),
+            Text(plan.amount.toString()),
+          ],
+        ),
+        Row(
+          children: [
+            Text('Recurring Days'),
+            Text(plan.recurringDays.toString()),
+          ],
+        ),
+      ],
     );
   }
 }

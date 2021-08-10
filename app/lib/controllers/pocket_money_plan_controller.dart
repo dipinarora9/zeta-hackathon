@@ -19,6 +19,8 @@ class PocketMoneyPlanController with ChangeNotifier {
     fetchPlans();
   }
 
+  abc() {}
+
   void fetchPlans() async {
     AppResponse<Map<String, PocketMoney>> response =
         await databaseService.fetchPocketMoneyDetails(identityService.getUID());
