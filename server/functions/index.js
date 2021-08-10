@@ -7,19 +7,22 @@ exports.pocketMoneyUpdater = functions.https.onRequest(async (request, response)
     const time = getTimestamp(new Date());
     // fetch docs of users(parent) with latest renewal date as today 12AM 
     let users = await db.collection('users').where('latest_renewal_date', '==', time).get();
-    users.forEach(async (doc) => {
+    console.log(time);
+    for (let i = 0; i < users.size; i++) {
+        let userData = users.docs[i];
+
         // fetch child of that parent id with renewal time stamp is today 12AM
-        let children = await db.collection('users').doc(doc.id).collection('children').where('pocket_money_details.renewal_date', '==', time).get();
+        let children = await db.collection('users').doc(userData.id).collection('children').where('pocket_money_details.renewal_date', '==', time).get();
         let pocket_money_plans = {};
-        let getMethods = (obj) => Object.getOwnPropertyNames(obj)
-        for (var childDoc in children) {
-            console.log(getMethods(childDoc));
-            let childData = childDoc.data();
+
+        for (let j = 0; j < children.size; j++) {
+            let childData = children.docs[j].data();
+
             let plan_id = childData.pocket_money_details.pocket_money_plan_id;
-            console.log("dipin");
+
             if (!(plan_id in pocket_money_plans)) {
                 // fetch pocket money plan
-                let pocketMoneyPlans = await db.collection('users').doc(doc.id).collection('pocket_money_plans').where('plan_id', '==', plan_id).get();
+                let pocketMoneyPlans = await db.collection('users').doc(userData.id).collection('pocket_money_plans').where('plan_id', '==', plan_id).get();
                 pocket_money_plans[plan_id] = pocketMoneyPlans.docs[0].data();
             }
             const plan = pocket_money_plans[plan_id];
@@ -29,28 +32,28 @@ exports.pocketMoneyUpdater = functions.https.onRequest(async (request, response)
             today.setDate(today.getDate() + plan.recurring_days)
             childData.balance += plan.amount;
             childData.pocket_money_details.renewal_date = getTimestamp(today);
-
-            await db.collection('users').doc(doc.id).collection('children').doc(childData.user_id).set(childData);
+            console.log(getTimestamp(today));
+            await db.collection('users').doc(userData.id).collection('children').doc(childData.user_id).set(childData);
         }
-        // let childToGetMoneyNow = await db.collection('users').doc(doc.id).collection('children').orderBy('pocket_money_details.renewal_date').limit(1).get();
-        // //1628447400
-        // childToGetMoneyNow = childToGetMoneyNow.docs[0].data();
-        // console.log(childToGetMoneyNow);
-        // const latest_renewal_date = childToGetMoneyNow.pocket_money_details.renewal_date;
-        // console.log(latest_renewal_date);
-        // await db.collection('users').doc(doc.id).update({ "latest_renewal_date": latest_renewal_date });
-    });
+        let childToGetMoneyNow = await db.collection('users').doc(userData.id).collection('children').orderBy('pocket_money_details.renewal_date').limit(1).get();
+
+        //1628533600
+        childToGetMoneyNow = childToGetMoneyNow.docs[0].data();
+
+        const latest_renewal_date = childToGetMoneyNow.pocket_money_details.renewal_date;
+        console.log(latest_renewal_date);
+        await db.collection('users').doc(userData.id).update({ "latest_renewal_date": latest_renewal_date });
+    }
     functions.logger.info("Hello logs!", { structuredData: true });
     response.send("Updated");
 });
 
 
 function getTimestamp(date) {
-
     // fetch date convert to millisecond epoch 12 AM
-    let dd = String(date.getDate()).padStart(2, '0');
-    let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
-    let yyyy = date.getFullYear();
-    const d = new Date(`${mm}/${dd}/${yyyy} 00:00:00`);
+    let dd = String(date.getUTCDate()).padStart(2, '0');
+    let mm = String(date.getUTCMonth()).padStart(2, '0'); //January is 0!
+    let yyyy = date.getUTCFullYear();
+    const d = new Date(Date.UTC(yyyy, mm, dd, 0, 0, 0));
     return d.getTime() / 1000;
 }
