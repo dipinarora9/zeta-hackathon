@@ -18,5 +18,9 @@ class IdentityService {
     await cacheService.putData('parentId', id);
   }
 
+  void removeParentId() async {
+    await cacheService.delete('parentId');
+  }
+
   String getName() => FirebaseAuth.instance.currentUser!.displayName ?? '';
 }

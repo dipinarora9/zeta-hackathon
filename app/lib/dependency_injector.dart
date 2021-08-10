@@ -21,23 +21,40 @@ final sl = GetIt.instance;
 Future<void> init() async {
   /// Controllers
   ///
-  sl.registerFactory<LoginController>(
-      () => LoginController(sl<AuthenticationService>()));
-  sl.registerFactory<ChildHomepageController>(() =>
-      ChildHomepageController(sl<DatabaseService>(), sl<IdentityService>()));
+  sl.registerFactory<LoginController>(() => LoginController(
+        sl<AuthenticationService>(),
+        sl<IdentityService>(),
+      ));
+  sl.registerFactory<ChildHomepageController>(() => ChildHomepageController(
+        sl<DatabaseService>(),
+        sl<IdentityService>(),
+        sl<AuthenticationService>(),
+      ));
   sl.registerFactory<ParentHomepageController>(() => ParentHomepageController(
-      sl<DatabaseService>(), sl<AnalyticsService>(), sl<IdentityService>())
-    ..initialize());
-  sl.registerFactoryParam<ChildrenController, Child, void>((p1, _) =>
-      ChildrenController(p1, sl<AuthenticationService>(), sl<DatabaseService>(),
-          sl<IdentityService>()));
-  sl.registerFactory<PocketMoneyPlanController>(() =>
-      PocketMoneyPlanController(sl<DatabaseService>(), sl<IdentityService>())
-        ..initialize());
-  sl.registerFactory<TransactionController>(() =>
-      TransactionController(sl<TransactionService>(), sl<IdentityService>()));
-  sl.registerFactory<SignUpController>(() =>
-      SignUpController(sl<AuthenticationService>(), sl<DatabaseService>()));
+        sl<DatabaseService>(),
+        sl<AnalyticsService>(),
+        sl<IdentityService>(),
+        sl<AuthenticationService>(),
+      )..initialize());
+  sl.registerFactoryParam<ChildrenController, Child, void>(
+      (p1, _) => ChildrenController(
+            p1,
+            sl<AuthenticationService>(),
+            sl<DatabaseService>(),
+            sl<IdentityService>(),
+          ));
+  sl.registerFactory<PocketMoneyPlanController>(() => PocketMoneyPlanController(
+        sl<DatabaseService>(),
+        sl<IdentityService>(),
+      )..initialize());
+  sl.registerFactory<TransactionController>(() => TransactionController(
+        sl<TransactionService>(),
+        sl<IdentityService>(),
+      ));
+  sl.registerFactory<SignUpController>(() => SignUpController(
+        sl<AuthenticationService>(),
+        sl<DatabaseService>(),
+      ));
 
   ///Services
   ///

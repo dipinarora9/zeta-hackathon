@@ -11,6 +11,8 @@ class ParentLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loginController =
+        Provider.of<LoginController>(context, listen: false);
     return CustomScaffold(
       title: 'Parent Login',
       body: Center(
@@ -19,6 +21,8 @@ class ParentLogin extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
+                controller: loginController.emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(labelText: 'Email'),
               ),
             ),
@@ -26,13 +30,15 @@ class ParentLogin extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 obscureText: true,
+                controller: loginController.passwordController,
                 decoration: InputDecoration(labelText: 'Password'),
               ),
             ),
             CustomButton(
               onPressed: () async {
-                await context.read<LoginController>().loginAsParent();
-                Navigator.of(context).pushNamed(Routes.homepage);
+                bool loggedIn =
+                    await context.read<LoginController>().loginAsParent();
+                if (loggedIn) Navigator.of(context).pushNamed(Routes.homepage);
               },
               text: 'Login',
             ),

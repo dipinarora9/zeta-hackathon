@@ -30,7 +30,8 @@ class ChildrenController {
         debugPrint(signUpResponse.error);
         UIHelper.showToast(msg: signUpResponse.error);
         return;
-      }
+      } else
+        UIHelper.showToast(msg: 'Invite sent!');
       child = child.copyWith(
           createdDate: DateTime.now().toUtc().millisecondsSinceEpoch,
           aadhaarNumber: int.parse(aadhaarController.text),
@@ -49,6 +50,17 @@ class ChildrenController {
       Navigator.of(context).pop();
     } else
       UIHelper.showToast(msg: response.error);
+  }
+
+  resendInvite() async {
+    AppResponse<bool> signUpResponse =
+        await authenticationService.sendLoginLinkToChild(emailController.text);
+    if (!signUpResponse.isSuccess()) {
+      debugPrint(signUpResponse.error);
+      UIHelper.showToast(msg: signUpResponse.error);
+      return;
+    } else
+      UIHelper.showToast(msg: 'Invite sent!');
   }
 
   deleteChild(BuildContext context) async {

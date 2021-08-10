@@ -9,12 +9,20 @@ import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
 class HomepageScreen extends StatelessWidget {
-  const HomepageScreen({Key? key}) : super(key: key);
+  HomepageScreen({Key? key}) : super(key: key);
+  final GlobalKey<RefreshIndicatorState> refreshKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       title: 'Hi Name',
+      showBackButton: false,
+      leadingWidget: IconButton(
+        onPressed: () =>
+            context.read<ParentHomepageController>().logout(context),
+        icon: Icon(Icons.logout),
+      ),
       actions: [
         IconButton(
           onPressed: () =>
@@ -23,17 +31,26 @@ class HomepageScreen extends StatelessWidget {
         )
       ],
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            AnalyticsWidget(),
-            childrenWidget(context),
-            CustomButton(
+        child: RefreshIndicator(
+          key: refreshKey,
+          onRefresh: () =>
+              context.read<ParentHomepageController>().fetchChildren(),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 60,
+              ),
+              childrenWidget(context),
+              CustomButton(
                 onPressed: () => Navigator.of(context).pushNamed(
-                      Routes.modifyChild,
-                      arguments: Child.empty(),
-                    ),
-                text: 'Add Child'),
-          ],
+                  Routes.modifyChild,
+                  arguments: Child.empty(),
+                ),
+                text: 'Add Child',
+              ),
+              AnalyticsWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -43,7 +60,7 @@ class HomepageScreen extends StatelessWidget {
     return Consumer<ParentHomepageController>(builder: (_, value, __) {
       return ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: (MediaQuery.of(context).size.height / 8) *
+            maxHeight: (MediaQuery.of(context).size.height / 9) *
                 value.children.length),
         child: ListView.builder(
           itemBuilder: (context, index) =>

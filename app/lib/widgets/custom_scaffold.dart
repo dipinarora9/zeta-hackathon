@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomScaffold extends StatelessWidget {
   final Widget body;
+  final Widget? leadingWidget;
   final Widget? floatingActionButton;
   final String title;
   final List<Widget>? actions;
@@ -12,6 +13,7 @@ class CustomScaffold extends StatelessWidget {
       {Key? key,
       required this.title,
       required this.body,
+      this.leadingWidget,
       this.actions,
       this.floatingActionButton,
       this.sKey,
@@ -30,7 +32,7 @@ class CustomScaffold extends StatelessWidget {
                 icon: Icon(Icons.chevron_left),
                 onPressed: () => Navigator.of(context).pop(),
               )
-            : Container(),
+            : leadingWidget ?? Container(),
         title: Text(
           title,
           style: TextStyle(color: Colors.black),

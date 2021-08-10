@@ -110,54 +110,55 @@ class BarChartSample2State extends State<BarChartSample2> {
                     BarChartData(
                       maxY: 20,
                       barTouchData: BarTouchData(
-                          touchTooltipData: BarTouchTooltipData(
-                            tooltipBgColor: Colors.grey,
-                            getTooltipItem: (_a, _b, _c, _d) => null,
-                          ),
-                          touchCallback: (response) {
-                            if (response.spot == null) {
-                              setState(() {
-                                touchedGroupIndex = -1;
-                                showingBarGroups = List.of(rawBarGroups);
-                              });
-                              return;
-                            }
-
-                            touchedGroupIndex =
-                                response.spot!.touchedBarGroupIndex;
-
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor: Colors.grey,
+                          getTooltipItem: (_a, _b, _c, _d) => null,
+                        ),
+                        touchCallback: (response) {
+                          if (response.spot == null) {
                             setState(() {
-                              if (response.touchInput is PointerExitEvent ||
-                                  response.touchInput is PointerUpEvent) {
-                                touchedGroupIndex = -1;
-                                showingBarGroups = List.of(rawBarGroups);
-                              } else {
-                                showingBarGroups = List.of(rawBarGroups);
-                                if (touchedGroupIndex != -1) {
-                                  var sum = 0.0;
-                                  for (var rod
-                                      in showingBarGroups[touchedGroupIndex]
-                                          .barRods) {
-                                    sum += rod.y;
-                                  }
-                                  final avg = sum /
-                                      showingBarGroups[touchedGroupIndex]
-                                          .barRods
-                                          .length;
-
-                                  showingBarGroups[touchedGroupIndex] =
-                                      showingBarGroups[touchedGroupIndex]
-                                          .copyWith(
-                                    barRods: showingBarGroups[touchedGroupIndex]
-                                        .barRods
-                                        .map((rod) {
-                                      return rod.copyWith(y: avg);
-                                    }).toList(),
-                                  );
-                                }
-                              }
+                              touchedGroupIndex = -1;
+                              showingBarGroups = List.of(rawBarGroups);
                             });
-                          }),
+                            return;
+                          }
+
+                          touchedGroupIndex =
+                              response.spot!.touchedBarGroupIndex;
+
+                          setState(() {
+                            if (response.touchInput is PointerExitEvent ||
+                                response.touchInput is PointerUpEvent) {
+                              touchedGroupIndex = -1;
+                              showingBarGroups = List.of(rawBarGroups);
+                            } else {
+                              showingBarGroups = List.of(rawBarGroups);
+                              if (touchedGroupIndex != -1) {
+                                var sum = 0.0;
+                                for (var rod
+                                    in showingBarGroups[touchedGroupIndex]
+                                        .barRods) {
+                                  sum += rod.y;
+                                }
+                                final avg = sum /
+                                    showingBarGroups[touchedGroupIndex]
+                                        .barRods
+                                        .length;
+
+                                showingBarGroups[touchedGroupIndex] =
+                                    showingBarGroups[touchedGroupIndex]
+                                        .copyWith(
+                                  barRods: showingBarGroups[touchedGroupIndex]
+                                      .barRods
+                                      .map((rod) {
+                                    return rod.copyWith(y: avg);
+                                  }).toList(),
+                                );
+                              }
+                            }
+                          });
+                        },
+                      ),
                       titlesData: FlTitlesData(
                         show: true,
                         bottomTitles: SideTitles(

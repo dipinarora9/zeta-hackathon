@@ -21,10 +21,6 @@ class InitialScreen extends StatelessWidget {
             text: 'Parent',
           ),
           CustomButton(
-            onPressed: () => Navigator.of(context).pushNamed(Routes.loginChild),
-            text: 'Child',
-          ),
-          CustomButton(
             onPressed: () => Navigator.of(context).pushNamed(Routes.signUp),
             text: 'New user? Sign Up',
           ),

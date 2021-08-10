@@ -15,31 +15,34 @@ class PocketMoneyPlanWidget extends StatelessWidget {
       title: Text(r"$ " + plan.amount.toString()),
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text('Amount'),
-                      Text(plan.amount.toString()),
-                    ],
+            Container(
+              width: MediaQuery.of(context).size.width / 2,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text('Amount'),
+                        Text(plan.amount.toString()),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text('Recurring Days'),
-                      Text(plan.recurringDays.toString()),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text('Recurring Days'),
+                        Text(plan.recurringDays.toString()),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             IconButton(
               onPressed: () async {
@@ -57,6 +60,11 @@ class PocketMoneyPlanWidget extends StatelessWidget {
                   context.read<PocketMoneyPlanController>().savePlan(res);
               },
               icon: Icon(Icons.edit),
+            ),
+            IconButton(
+              onPressed: () =>
+                  context.read<PocketMoneyPlanController>().deletePlan(plan),
+              icon: Icon(Icons.delete),
             ),
           ],
         ),

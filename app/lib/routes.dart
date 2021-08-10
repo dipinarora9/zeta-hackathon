@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
+import 'package:zeta_hackathon/services/dynamic_links_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 
 import 'controllers/children_controller.dart';
+import 'controllers/homepage/child_homepage_controller.dart';
 import 'controllers/homepage/parent_homepage_controller.dart';
 import 'controllers/login_controller.dart';
 import 'controllers/pocket_money_plan_controller.dart';
@@ -34,7 +36,10 @@ class Routes {
   static const String pocketMoneyPlans = '/pocketMoneyPlans';
 
   static final Map<String, WidgetBuilder> staticRoutes = {
-    Routes.homepageChild: (context) => ChildHomepageScreen(),
+    Routes.initialScreen: (context) {
+      DynamicLinks.handleDynamicLink(context);
+      return InitialScreen();
+    },
     Routes.allowPaymentScreen: (context) => AllowPaymentScreen(),
     Routes.transactionScreen: (context) => TransactionScreen(),
   };
@@ -42,10 +47,6 @@ class Routes {
   static Route<dynamic>? generateRoutes(RouteSettings routeSettings) {
     String uid = di<IdentityService>().getUID();
     String? parentId = di<IdentityService>().getParentId();
-    if (staticRoutes[routeSettings.name] != null) {
-      return MaterialPageRoute(
-          builder: staticRoutes[routeSettings.name]!, settings: routeSettings);
-    }
     if (routeSettings.name == Routes.initialScreen &&
         uid != '' &&
         parentId == null)
@@ -55,6 +56,19 @@ class Routes {
           create: (_) => di<ParentHomepageController>(),
         ),
       );
+    else if (routeSettings.name == Routes.initialScreen &&
+        uid != '' &&
+        parentId != null)
+      return MaterialPageRoute(
+        builder: (BuildContext context) => ChangeNotifierProvider(
+          child: ChildHomepageScreen(),
+          create: (_) => di<ChildHomepageController>(),
+        ),
+      );
+    if (staticRoutes[routeSettings.name] != null) {
+      return MaterialPageRoute(
+          builder: staticRoutes[routeSettings.name]!, settings: routeSettings);
+    }
     switch (routeSettings.name) {
       case Routes.homepage:
         return MaterialPageRoute(
@@ -98,10 +112,6 @@ class Routes {
             child: PocketMoneyPlanScreen(),
             create: (_) => di<PocketMoneyPlanController>(),
           ),
-        );
-      default:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => InitialScreen(),
         );
     }
   }

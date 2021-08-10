@@ -56,12 +56,25 @@ class AuthenticationService {
   Future<AppResponse<bool>> sendLoginLinkToChild(String email) async {
     try {
       var acs = ActionCodeSettings(
-          url: 'https://zetahackdipinprashant.page.link',
+          url:
+              'https://zetahackdipinprashant.page.link?email=$email&parent_id=${FirebaseAuth.instance.currentUser!.uid}',
           handleCodeInApp: true,
           androidPackageName: 'com.example.zeta_hackathon',
-          androidMinimumVersion: '16');
+          androidMinimumVersion: '16',
+          dynamicLinkDomain: 'zetahackdipinprashant.page.link');
       await FirebaseAuth.instance
           .sendSignInLinkToEmail(email: email, actionCodeSettings: acs);
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
+
+  Future<AppResponse<bool>> signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);

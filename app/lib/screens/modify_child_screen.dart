@@ -46,8 +46,16 @@ class ModifyChildScreen extends StatelessWidget {
             if (!childrenController.child.isEmpty())
               CustomButton(
                 onPressed: () async {
+                  await context.read<ChildrenController>().resendInvite();
+                },
+                text: 'Resend Invite',
+              ),
+            if (!childrenController.child.isEmpty())
+              CustomButton(
+                onPressed: () async {
                   await context.read<ChildrenController>().deleteChild(context);
                 },
+                bgColor: Colors.red.withOpacity(0.8),
                 text: 'Delete Child',
               ),
           ],

@@ -25,4 +25,13 @@ class CacheService<T> {
       return AppResponse(error: e.toString());
     }
   }
+
+  Future<AppResponse<bool>> delete(String key) async {
+    try {
+      await _box.delete(key);
+      return AppResponse(data: true);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
 }
