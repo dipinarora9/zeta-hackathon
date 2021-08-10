@@ -28,6 +28,19 @@ class Child extends CustomUser {
           email: email,
         );
 
+  Child.empty()
+      : balance = 0,
+        paymentPermissionRequired = false,
+        parentId = '',
+        pocketMoneyDetails = null,
+        super(
+          userId: '',
+          createdDate: 0,
+          aadhaarNumber: 0,
+          isParent: false,
+          username: '',
+          email: '',
+        );
   final String parentId;
   final bool paymentPermissionRequired;
   final PocketMoneyDetails? pocketMoneyDetails;
@@ -91,6 +104,8 @@ class Child extends CustomUser {
         "username": username,
         "email": email,
       };
+
+  bool isEmpty() => userId == '';
 
   UserObject toUserObject() => UserObject(name: username, id: userId);
 }

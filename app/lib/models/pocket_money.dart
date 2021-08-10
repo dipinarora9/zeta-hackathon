@@ -13,10 +13,17 @@ class PocketMoney {
     required this.planId,
   });
 
+  PocketMoney.empty()
+      : this.amount = 0,
+        this.recurringDays = 0,
+        this.parentId = '',
+        this.planId = '';
+
   final double amount;
   final int recurringDays;
   final String parentId;
   final String planId;
+
   PocketMoney copyWith({
     double? amount,
     int? recurringDays,

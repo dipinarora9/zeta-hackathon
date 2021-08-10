@@ -14,17 +14,20 @@ class ChildrenController {
   final TextEditingController emailController;
   final TextEditingController usernameController;
   final TextEditingController aadhaarController;
+
   ChildrenController(this.child, this.authenticationService,
       this.databaseService, this.identityService)
-      : emailController = TextEditingController(),
-        aadhaarController = TextEditingController(),
-        usernameController = TextEditingController();
+      : emailController = TextEditingController(text: child.email),
+        aadhaarController =
+            TextEditingController(text: child.aadhaarNumber.toString()),
+        usernameController = TextEditingController(text: child.username);
 
-  saveChild() async {
+  saveChild(BuildContext context) async {
     if (child.userId == "") {
       AppResponse<bool> signUpResponse = await authenticationService
           .sendLoginLinkToChild(emailController.text);
       if (!signUpResponse.isSuccess()) {
+        debugPrint(signUpResponse.error);
         UIHelper.showToast(msg: signUpResponse.error);
         return;
       }
@@ -41,17 +44,20 @@ class ChildrenController {
     AppResponse<String> response = await databaseService.addChildDetails(child);
     if (response.isSuccess()) {
       child = child.copyWith(userId: response.data);
+
       UIHelper.showToast(msg: 'Saved');
+      Navigator.of(context).pop();
     } else
       UIHelper.showToast(msg: response.error);
   }
 
-  deleteChild() async {
+  deleteChild(BuildContext context) async {
     AppResponse<bool> response =
         await databaseService.deleteChildDetails(child);
-    if (response.isSuccess())
+    if (response.isSuccess()) {
+      Navigator.of(context).pop();
       UIHelper.showToast(msg: 'Deleted');
-    else
+    } else
       UIHelper.showToast(msg: response.error);
   }
 }

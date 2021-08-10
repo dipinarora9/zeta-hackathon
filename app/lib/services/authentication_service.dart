@@ -19,7 +19,7 @@ class AuthenticationService {
   Future<AppResponse<bool>> loginAsChild(String email, String emailLink) async {
     try {
       var auth = FirebaseAuth.instance;
-      var emailAuth = 'someemail@domain.com';
+      var emailAuth = email;
       if (auth.isSignInWithEmailLink(emailLink)) {
         UserCredential userCredential = await auth.signInWithEmailLink(
             email: emailAuth, emailLink: emailLink);
@@ -42,8 +42,8 @@ class AuthenticationService {
 
   Future<AppResponse<String>> signUp(String email, String password) async {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInAnonymously();
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       return AppResponse(data: userCredential.user!.uid);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);

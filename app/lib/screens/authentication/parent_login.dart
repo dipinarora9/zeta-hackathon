@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zeta_hackathon/controllers/login_controller.dart';
 import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
@@ -28,7 +30,10 @@ class ParentLogin extends StatelessWidget {
               ),
             ),
             CustomButton(
-              onPressed: () => Navigator.of(context).pushNamed(Routes.homepage),
+              onPressed: () async {
+                await context.read<LoginController>().loginAsParent();
+                Navigator.of(context).pushNamed(Routes.homepage);
+              },
               text: 'Login',
             ),
             CustomButton(

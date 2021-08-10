@@ -7,7 +7,7 @@ class IdentityService {
 
   IdentityService(this.cacheService);
 
-  String getUID() => FirebaseAuth.instance.currentUser!.uid;
+  String getUID() => FirebaseAuth.instance.currentUser?.uid ?? '';
 
   String? getParentId() {
     AppResponse<String?> response = cacheService.getData('parentId');

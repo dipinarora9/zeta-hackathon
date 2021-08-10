@@ -31,6 +31,7 @@ class DatabaseService {
   Future<AppResponse<bool>> saveParentDetails(Parent parent) async {
     try {
       await parentCollection.doc(parent.userId).set(parent);
+
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
@@ -57,7 +58,11 @@ class DatabaseService {
     try {
       var ref = await childCollection(child.parentId).add(child);
       child = child.copyWith(userId: ref.id);
-      await childCollection(child.parentId).add(child);
+      await childCollection(child.parentId).doc(ref.id).set(child);
+
+      await parentCollection.doc(child.parentId).update({
+        'children_ids': FieldValue.arrayUnion([child.userId])
+      });
       return AppResponse(data: ref.id);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
@@ -99,6 +104,9 @@ class DatabaseService {
   Future<AppResponse<bool>> deleteChildDetails(Child child) async {
     try {
       await childCollection(child.parentId).doc(child.userId).delete();
+      await parentCollection.doc(child.parentId).update({
+        'children_ids': FieldValue.arrayRemove([child.userId])
+      });
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
@@ -123,11 +131,18 @@ class DatabaseService {
   Future<AppResponse<bool>> addPocketMoneyPlanDetails(
       PocketMoney pocketMoney) async {
     try {
-      var ref =
-          await pocketMoneyCollection(pocketMoney.parentId).add(pocketMoney);
+      pocketMoney = pocketMoney.copyWith(
+        parentId: FirebaseAuth.instance.currentUser!.uid,
+      );
+      String planId = pocketMoney.planId;
+      if (planId == '') {
+        var ref =
+            await pocketMoneyCollection(pocketMoney.parentId).add(pocketMoney);
+        planId = ref.id;
+      }
       await pocketMoneyCollection(pocketMoney.parentId)
-          .doc(ref.id)
-          .update(pocketMoney.copyWith(planId: ref.id).toJson());
+          .doc(planId)
+          .update(pocketMoney.copyWith(planId: planId).toJson());
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);

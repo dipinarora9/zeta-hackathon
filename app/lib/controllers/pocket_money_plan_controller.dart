@@ -19,8 +19,6 @@ class PocketMoneyPlanController with ChangeNotifier {
     fetchPlans();
   }
 
-  abc() {}
-
   void fetchPlans() async {
     AppResponse<Map<String, PocketMoney>> response =
         await databaseService.fetchPocketMoneyDetails(identityService.getUID());
@@ -33,7 +31,7 @@ class PocketMoneyPlanController with ChangeNotifier {
       UIHelper.showToast(msg: response.error);
   }
 
-  updatePlan(PocketMoney plan) async {
+  savePlan(PocketMoney plan) async {
     AppResponse<bool> response =
         await databaseService.addPocketMoneyPlanDetails(plan);
     if (response.isSuccess()) {

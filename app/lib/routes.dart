@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zeta_hackathon/models/user/child.dart';
+import 'package:zeta_hackathon/services/identitiy_service.dart';
 
+import 'controllers/children_controller.dart';
+import 'controllers/homepage/parent_homepage_controller.dart';
+import 'controllers/login_controller.dart';
 import 'controllers/pocket_money_plan_controller.dart';
+import 'controllers/signup_controller.dart';
 import 'dependency_injector.dart' as sl;
 import 'screens/allow_payment_screen.dart';
 import 'screens/authentication/child_login.dart';
@@ -28,22 +34,64 @@ class Routes {
   static const String pocketMoneyPlans = '/pocketMoneyPlans';
 
   static final Map<String, WidgetBuilder> staticRoutes = {
-    Routes.modifyChild: (context) => ModifyChildScreen(),
-    Routes.signUp: (context) => SignUpScreen(),
-    Routes.loginChild: (context) => ChildLogin(),
-    Routes.loginParent: (context) => ParentLogin(),
     Routes.homepageChild: (context) => ChildHomepageScreen(),
-    Routes.homepage: (context) => HomepageScreen(),
     Routes.allowPaymentScreen: (context) => AllowPaymentScreen(),
     Routes.transactionScreen: (context) => TransactionScreen(),
   };
 
   static Route<dynamic>? generateRoutes(RouteSettings routeSettings) {
+    String uid = di<IdentityService>().getUID();
+    String? parentId = di<IdentityService>().getParentId();
     if (staticRoutes[routeSettings.name] != null) {
       return MaterialPageRoute(
           builder: staticRoutes[routeSettings.name]!, settings: routeSettings);
     }
+    if (routeSettings.name == Routes.initialScreen &&
+        uid != '' &&
+        parentId == null)
+      return MaterialPageRoute(
+        builder: (BuildContext context) => ChangeNotifierProvider(
+          child: HomepageScreen(),
+          create: (_) => di<ParentHomepageController>(),
+        ),
+      );
     switch (routeSettings.name) {
+      case Routes.homepage:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => ChangeNotifierProvider(
+            child: HomepageScreen(),
+            create: (_) => di<ParentHomepageController>(),
+          ),
+        );
+      case Routes.modifyChild:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => Provider(
+            child: ModifyChildScreen(),
+            create: (_) => di<ChildrenController>(
+                param1: routeSettings.arguments as Child),
+          ),
+        );
+      case Routes.signUp:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => ChangeNotifierProvider(
+            child: SignUpScreen(),
+            create: (_) => di<SignUpController>(),
+          ),
+        );
+      case Routes.loginParent:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => ChangeNotifierProvider(
+            child: ParentLogin(),
+            create: (_) => di<LoginController>(),
+          ),
+        );
+      case Routes.loginChild:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => ChangeNotifierProvider(
+            child: ChildLogin(),
+            create: (_) => di<LoginController>(),
+          ),
+        );
       case Routes.pocketMoneyPlans:
         return MaterialPageRoute(
           builder: (BuildContext context) => ChangeNotifierProvider(
