@@ -79,7 +79,7 @@ class Child extends CustomUser {
             : json["payment_permission_required"],
         pocketMoneyDetails: json["pocket_money_details"] == null
             ? null
-            : pocketMoneyDetailsFromJson(json["pocket_money_details"]),
+            : PocketMoneyDetails.fromJson(json["pocket_money_details"]),
         balance: json["balance"] == null ? null : json["balance"].toDouble(),
         userId: json["user_id"] == null ? null : json["user_id"],
         createdDate: json["created_date"] == null ? null : json["created_date"],
@@ -93,9 +93,8 @@ class Child extends CustomUser {
   Map<String, dynamic> toJson() => {
         "parent_id": parentId,
         "payment_permission_required": paymentPermissionRequired,
-        "pocket_money_details": pocketMoneyDetails == null
-            ? null
-            : pocketMoneyDetailsToJson(pocketMoneyDetails!),
+        "pocket_money_details":
+            pocketMoneyDetails == null ? null : pocketMoneyDetails!.toJson(),
         "balance": balance,
         "user_id": userId,
         "created_date": createdDate,

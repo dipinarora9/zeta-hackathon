@@ -56,14 +56,28 @@ class DatabaseService {
 
   Future<AppResponse<String>> addChildDetails(Child child) async {
     try {
-      var ref = await childCollection(child.parentId).add(child);
-      child = child.copyWith(userId: ref.id);
-      await childCollection(child.parentId).doc(ref.id).set(child);
-
+      String userId = child.userId;
+      if (userId == '') {
+        var ref = await childCollection(child.parentId).add(child);
+        child = child.copyWith(userId: ref.id);
+        userId = ref.id;
+      }
+      await childCollection(child.parentId).doc(userId).set(child);
+      QuerySnapshot s = await childCollection(child.parentId)
+          .orderBy('pocket_money_details.renewal_date')
+          .limit(1)
+          .get();
+      int latestRenewal = double.maxFinite.toInt();
+      if (s.docs.length > 0) {
+        Child c = s.docs[0].data() as Child;
+        latestRenewal =
+            c.pocketMoneyDetails?.renewalDate ?? double.maxFinite.toInt();
+      }
       await parentCollection.doc(child.parentId).update({
-        'children_ids': FieldValue.arrayUnion([child.userId])
+        'children_ids': FieldValue.arrayUnion([child.userId]),
+        'latest_renewal_date': latestRenewal,
       });
-      return AppResponse(data: ref.id);
+      return AppResponse(data: userId);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
     } catch (e) {

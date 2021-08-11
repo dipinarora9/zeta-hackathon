@@ -10,6 +10,7 @@ import 'controllers/homepage/parent_homepage_controller.dart';
 import 'controllers/login_controller.dart';
 import 'controllers/pocket_money_plan_controller.dart';
 import 'controllers/signup_controller.dart';
+import 'controllers/transaction_controller.dart';
 import 'dependency_injector.dart' as sl;
 import 'screens/allow_payment_screen.dart';
 import 'screens/authentication/child_login.dart';
@@ -41,7 +42,6 @@ class Routes {
       return InitialScreen();
     },
     Routes.allowPaymentScreen: (context) => AllowPaymentScreen(),
-    Routes.transactionScreen: (context) => TransactionScreen(),
   };
 
   static Route<dynamic>? generateRoutes(RouteSettings routeSettings) {
@@ -79,7 +79,7 @@ class Routes {
         );
       case Routes.modifyChild:
         return MaterialPageRoute(
-          builder: (BuildContext context) => Provider(
+          builder: (BuildContext context) => ChangeNotifierProvider(
             child: ModifyChildScreen(),
             create: (_) => di<ChildrenController>(
                 param1: routeSettings.arguments as Child),
@@ -111,6 +111,13 @@ class Routes {
           builder: (BuildContext context) => ChangeNotifierProvider(
             child: PocketMoneyPlanScreen(),
             create: (_) => di<PocketMoneyPlanController>(),
+          ),
+        );
+      case Routes.transactionScreen:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => ChangeNotifierProvider(
+            child: TransactionScreen(),
+            create: (_) => di<TransactionController>(),
           ),
         );
     }

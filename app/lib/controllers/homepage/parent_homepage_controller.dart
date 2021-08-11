@@ -27,6 +27,7 @@ class ParentHomepageController with ChangeNotifier {
   }
 
   Future<void> fetchChildren() async {
+    _children.clear();
     AppResponse<Map<String, Child>> response =
         await databaseService.fetchChildren(identityService.getUID());
     if (response.isSuccess()) {

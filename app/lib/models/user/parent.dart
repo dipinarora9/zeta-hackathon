@@ -11,6 +11,7 @@ class Parent extends CustomUser {
     required this.accountNumber,
     required this.childrenIds,
     required this.mobile,
+    this.latestRenewalDate,
     required userId,
     required createdDate,
     required aadhaarNumber,
@@ -28,6 +29,7 @@ class Parent extends CustomUser {
 
   final int accountNumber;
   final int mobile;
+  final int? latestRenewalDate;
   final List<String> childrenIds;
 
   Parent copyWith({
@@ -40,6 +42,7 @@ class Parent extends CustomUser {
     String? username,
     bool? isParent,
     String? email,
+    int? latestRenewalDate,
   }) =>
       Parent(
         accountNumber: accountNumber ?? this.accountNumber,
@@ -51,6 +54,7 @@ class Parent extends CustomUser {
         isParent: isParent ?? this.isParent,
         username: username ?? this.username,
         email: email ?? this.email,
+        latestRenewalDate: latestRenewalDate ?? this.latestRenewalDate,
       );
 
   factory Parent.fromJson(Map<String, dynamic> json) => Parent(
@@ -67,6 +71,9 @@ class Parent extends CustomUser {
         isParent: json["is_parent"] == null ? null : json["is_parent"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
+        latestRenewalDate: json["latest_renewal_date"] == null
+            ? null
+            : json["latest_renewal_date"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -79,5 +86,6 @@ class Parent extends CustomUser {
         "is_parent": isParent,
         "username": username,
         "email": email,
+        "latest_renewal_date": latestRenewalDate,
       };
 }

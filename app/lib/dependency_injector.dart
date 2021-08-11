@@ -9,6 +9,7 @@ import 'package:zeta_hackathon/services/cache_service.dart';
 import 'package:zeta_hackathon/services/database_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 import 'package:zeta_hackathon/services/notification_service.dart';
+import 'package:zeta_hackathon/services/scanner_service.dart';
 import 'package:zeta_hackathon/services/transaction_service.dart';
 
 import 'controllers/homepage/child_homepage_controller.dart';
@@ -37,12 +38,13 @@ Future<void> init() async {
         sl<AuthenticationService>(),
       )..initialize());
   sl.registerFactoryParam<ChildrenController, Child, void>(
-      (p1, _) => ChildrenController(
-            p1,
-            sl<AuthenticationService>(),
-            sl<DatabaseService>(),
-            sl<IdentityService>(),
-          ));
+    (p1, _) => ChildrenController(
+      p1,
+      sl<AuthenticationService>(),
+      sl<DatabaseService>(),
+      sl<IdentityService>(),
+    )..initialize(),
+  );
   sl.registerFactory<PocketMoneyPlanController>(() => PocketMoneyPlanController(
         sl<DatabaseService>(),
         sl<IdentityService>(),
@@ -50,6 +52,7 @@ Future<void> init() async {
   sl.registerFactory<TransactionController>(() => TransactionController(
         sl<TransactionService>(),
         sl<IdentityService>(),
+        sl<ScannerService>(),
       ));
   sl.registerFactory<SignUpController>(() => SignUpController(
         sl<AuthenticationService>(),
@@ -63,6 +66,7 @@ Future<void> init() async {
       () => AuthenticationService());
   sl.registerLazySingleton<DatabaseService>(() => DatabaseService());
   sl.registerLazySingleton<CacheService<String>>(() => CacheService<String>());
+  sl.registerLazySingleton<ScannerService>(() => ScannerService());
   sl.registerLazySingleton<IdentityService>(
       () => IdentityService(sl<CacheService<String>>()));
   sl.registerLazySingleton<NotificationService>(

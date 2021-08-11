@@ -1,12 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:zeta_hackathon/helpers/app_response.dart';
 import 'package:zeta_hackathon/helpers/ui_helper.dart';
+import 'package:zeta_hackathon/models/pocket_money.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
 import 'package:zeta_hackathon/services/authentication_service.dart';
 import 'package:zeta_hackathon/services/database_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 
-class ChildrenController {
+class ChildrenController with ChangeNotifier {
   Child child;
   final DatabaseService databaseService;
   final IdentityService identityService;
@@ -14,13 +15,37 @@ class ChildrenController {
   final TextEditingController emailController;
   final TextEditingController usernameController;
   final TextEditingController aadhaarController;
+  String? _currentSelectedPlan;
+  Map<String, PocketMoney> _plans;
 
   ChildrenController(this.child, this.authenticationService,
       this.databaseService, this.identityService)
       : emailController = TextEditingController(text: child.email),
         aadhaarController =
             TextEditingController(text: child.aadhaarNumber.toString()),
-        usernameController = TextEditingController(text: child.username);
+        usernameController = TextEditingController(text: child.username),
+        _currentSelectedPlan = child.pocketMoneyDetails?.pocketMoneyPlanId,
+        this._plans = Map();
+
+  Map<String, PocketMoney> get plans => _plans;
+
+  String? get currentSelectedPlan => _currentSelectedPlan;
+
+  initialize() {
+    fetchPlans();
+  }
+
+  void fetchPlans() async {
+    AppResponse<Map<String, PocketMoney>> response =
+        await databaseService.fetchPocketMoneyDetails(identityService.getUID());
+    if (response.isSuccess()) {
+      response.data!.forEach((key, value) {
+        _plans[key] = value;
+      });
+      notifyListeners();
+    } else
+      UIHelper.showToast(msg: response.error);
+  }
 
   saveChild(BuildContext context) async {
     if (child.userId == "") {
@@ -32,20 +57,28 @@ class ChildrenController {
         return;
       } else
         UIHelper.showToast(msg: 'Invite sent!');
+      DateTime d = DateTime.now().toUtc();
       child = child.copyWith(
-          createdDate: DateTime.now().toUtc().millisecondsSinceEpoch,
-          aadhaarNumber: int.parse(aadhaarController.text),
-          isParent: false,
-          username: usernameController.text,
-          email: emailController.text,
-          paymentPermissionRequired: false,
-          parentId: identityService.getUID(),
-          balance: 0);
+        createdDate: DateTime(d.year, d.month, d.day).millisecondsSinceEpoch,
+        aadhaarNumber: int.parse(aadhaarController.text),
+        isParent: false,
+        username: usernameController.text,
+        email: emailController.text,
+        paymentPermissionRequired: false,
+        parentId: identityService.getUID(),
+        balance: 0,
+      );
     }
+    child = child.copyWith(
+      aadhaarNumber: int.parse(aadhaarController.text),
+      username: usernameController.text,
+      email: emailController.text,
+      paymentPermissionRequired: false,
+    );
     AppResponse<String> response = await databaseService.addChildDetails(child);
     if (response.isSuccess()) {
       child = child.copyWith(userId: response.data);
-
+      notifyListeners();
       UIHelper.showToast(msg: 'Saved');
       Navigator.of(context).pop();
     } else
@@ -61,6 +94,26 @@ class ChildrenController {
       return;
     } else
       UIHelper.showToast(msg: 'Invite sent!');
+  }
+
+  setPlan(String? plan) async {
+    _currentSelectedPlan = plan;
+    if (plan != null) {
+      DateTime d = DateTime.now().toUtc();
+      child = child.copyWith(
+        pocketMoneyDetails: child.pocketMoneyDetails?.copyWith(
+              pocketMoneyPlanId: plan,
+            ) ??
+            PocketMoneyDetails(
+              renewalDate:
+                  (DateTime(d.year, d.month, d.day).millisecondsSinceEpoch ~/
+                          1000)
+                      .toInt(),
+              pocketMoneyPlanId: plan,
+            ),
+      );
+    }
+    notifyListeners();
   }
 
   deleteChild(BuildContext context) async {

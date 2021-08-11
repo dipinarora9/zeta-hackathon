@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeta_hackathon/controllers/children_controller.dart';
+import 'package:zeta_hackathon/models/pocket_money.dart';
 import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
@@ -9,8 +10,7 @@ class ModifyChildScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final childrenController =
-        Provider.of<ChildrenController>(context, listen: false);
+    final childrenController = Provider.of<ChildrenController>(context);
     return CustomScaffold(
       title: childrenController.child.isEmpty() ? 'Add Child' : 'Edit Child',
       body: SingleChildScrollView(
@@ -38,10 +38,30 @@ class ModifyChildScreen extends StatelessWidget {
                 decoration: InputDecoration(labelText: 'Username'),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Choose Pocket Money Plan'),
+            ),
+            DropdownButton<String>(
+              value: childrenController.currentSelectedPlan,
+              hint: Text('Select Plan'),
+              onChanged: (s) => childrenController.setPlan(s),
+              items: childrenController.plans.values
+                  .toList()
+                  .map<DropdownMenuItem<String>>((PocketMoney plan) {
+                return DropdownMenuItem<String>(
+                  value: plan.planId,
+                  child: Text(
+                      'Amount - ${plan.amount} Recurring Days - ${plan.recurringDays}'),
+                );
+              }).toList(),
+            ),
             CustomButton(
               onPressed: () =>
                   context.read<ChildrenController>().saveChild(context),
-              text: 'Add Child',
+              text: !childrenController.child.isEmpty()
+                  ? 'Save Child'
+                  : 'Add Child',
             ),
             if (!childrenController.child.isEmpty())
               CustomButton(
