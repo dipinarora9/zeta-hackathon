@@ -6,7 +6,6 @@ import 'package:zeta_hackathon/routes.dart';
 import 'package:zeta_hackathon/services/authentication_service.dart';
 
 import '../dependency_injector.dart';
-import 'identitiy_service.dart';
 
 class DynamicLinks {
   static handleDynamicLink(BuildContext context) async {
@@ -46,9 +45,8 @@ class DynamicLinks {
           return;
         }
         UIHelper.showToast(msg: 'Log In Success');
-        IdentityService identityService = sl<IdentityService>();
-        identityService.setParentId(query2['parent_id']);
-        Navigator.of(context).pushNamed(Routes.homepageChild);
+        await Navigator.of(context)
+            .pushNamed(Routes.homepageChild, arguments: query2['parent_id']);
       }
     }
   }

@@ -56,6 +56,11 @@ class ModifyChildScreen extends StatelessWidget {
                 );
               }).toList(),
             ),
+            SwitchListTile(
+              title: Text('Payment permission required?'),
+              value: childrenController.permissionRequired,
+              onChanged: childrenController.setPermission,
+            ),
             CustomButton(
               onPressed: () =>
                   context.read<ChildrenController>().saveChild(context),

@@ -16,6 +16,7 @@ class ChildrenController with ChangeNotifier {
   final TextEditingController usernameController;
   final TextEditingController aadhaarController;
   String? _currentSelectedPlan;
+  bool _permissionRequired;
   Map<String, PocketMoney> _plans;
 
   ChildrenController(this.child, this.authenticationService,
@@ -25,11 +26,14 @@ class ChildrenController with ChangeNotifier {
             TextEditingController(text: child.aadhaarNumber.toString()),
         usernameController = TextEditingController(text: child.username),
         _currentSelectedPlan = child.pocketMoneyDetails?.pocketMoneyPlanId,
+        _permissionRequired = child.paymentPermissionRequired,
         this._plans = Map();
 
   Map<String, PocketMoney> get plans => _plans;
 
   String? get currentSelectedPlan => _currentSelectedPlan;
+
+  bool get permissionRequired => _permissionRequired;
 
   initialize() {
     fetchPlans();
@@ -64,7 +68,7 @@ class ChildrenController with ChangeNotifier {
         isParent: false,
         username: usernameController.text,
         email: emailController.text,
-        paymentPermissionRequired: false,
+        paymentPermissionRequired: _permissionRequired,
         parentId: identityService.getUID(),
         balance: 0,
       );
@@ -73,7 +77,7 @@ class ChildrenController with ChangeNotifier {
       aadhaarNumber: int.parse(aadhaarController.text),
       username: usernameController.text,
       email: emailController.text,
-      paymentPermissionRequired: false,
+      paymentPermissionRequired: _permissionRequired,
     );
     AppResponse<String> response = await databaseService.addChildDetails(child);
     if (response.isSuccess()) {
@@ -113,6 +117,11 @@ class ChildrenController with ChangeNotifier {
             ),
       );
     }
+    notifyListeners();
+  }
+
+  setPermission(bool required) async {
+    _permissionRequired = required;
     notifyListeners();
   }
 

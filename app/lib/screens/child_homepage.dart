@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeta_hackathon/controllers/homepage/child_homepage_controller.dart';
-import 'package:zeta_hackathon/routes.dart';
 import 'package:zeta_hackathon/widgets/analytics_widget.dart';
 import 'package:zeta_hackathon/widgets/balance_widget.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
@@ -19,6 +18,13 @@ class ChildHomepageScreen extends StatelessWidget {
             context.read<ChildHomepageController>().logout(context),
         icon: Icon(Icons.logout),
       ),
+      actions: [
+        IconButton(
+          onPressed: () =>
+              context.read<ChildHomepageController>().generateQR(context),
+          icon: Icon(Icons.code),
+        )
+      ],
       body: Column(
         children: [
           BalanceWidget(),
@@ -27,7 +33,7 @@ class ChildHomepageScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () =>
-            Navigator.of(context).pushNamed(Routes.transactionScreen),
+            context.read<ChildHomepageController>().scanQR(context),
         label: Text('Scan QR'),
       ),
     );

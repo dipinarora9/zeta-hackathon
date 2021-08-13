@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
 import 'package:zeta_hackathon/services/dynamic_links_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
+import 'package:zeta_hackathon/widgets/qr_widget.dart';
 
 import 'controllers/children_controller.dart';
 import 'controllers/homepage/child_homepage_controller.dart';
@@ -35,6 +37,7 @@ class Routes {
   static const String allowPaymentScreen = '/allowPaymentScreen';
   static const String transactionScreen = '/transactionScreen';
   static const String pocketMoneyPlans = '/pocketMoneyPlans';
+  static const String qrScreen = '/qrCode';
 
   static final Map<String, WidgetBuilder> staticRoutes = {
     Routes.initialScreen: (context) {
@@ -77,6 +80,23 @@ class Routes {
             create: (_) => di<ParentHomepageController>(),
           ),
         );
+      case Routes.homepageChild:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => ChangeNotifierProvider(
+            child: ChildHomepageScreen(),
+            create: (_) => di<ChildHomepageController>(
+              param1: routeSettings.arguments != null
+                  ? (routeSettings.arguments as String)
+                  : null,
+            ),
+          ),
+        );
+      case Routes.qrScreen:
+        return MaterialPageRoute(
+          builder: (BuildContext context) => QRWidget(
+            data: routeSettings.arguments as String,
+          ),
+        );
       case Routes.modifyChild:
         return MaterialPageRoute(
           builder: (BuildContext context) => ChangeNotifierProvider(
@@ -117,7 +137,9 @@ class Routes {
         return MaterialPageRoute(
           builder: (BuildContext context) => ChangeNotifierProvider(
             child: TransactionScreen(),
-            create: (_) => di<TransactionController>(),
+            create: (_) => di<TransactionController>(
+              param1: routeSettings.arguments as UserObject,
+            ),
           ),
         );
     }

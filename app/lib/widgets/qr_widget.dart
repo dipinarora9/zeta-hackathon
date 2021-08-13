@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
 class QRWidget extends StatelessWidget {
   const QRWidget({Key? key, required this.data}) : super(key: key);
@@ -6,6 +7,9 @@ class QRWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return QRWidget(data: data);
+    return CustomScaffold(
+      body: QRWidget(data: data),
+      title: 'QR Code',
+    );
   }
 }

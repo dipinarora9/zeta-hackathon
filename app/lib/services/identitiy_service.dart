@@ -14,8 +14,9 @@ class IdentityService {
     return response.data;
   }
 
-  void setParentId(String id) async {
-    await cacheService.putData('parentId', id);
+  Future<void> setParentId(String id) async {
+    AppResponse<bool> response = await cacheService.putData('parentId', id);
+    if (!response.isSuccess()) throw Exception(response.error);
   }
 
   void removeParentId() async {

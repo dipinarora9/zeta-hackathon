@@ -3,6 +3,7 @@ import 'package:zeta_hackathon/controllers/children_controller.dart';
 import 'package:zeta_hackathon/controllers/homepage/parent_homepage_controller.dart';
 import 'package:zeta_hackathon/controllers/login_controller.dart';
 import 'package:zeta_hackathon/controllers/transaction_controller.dart';
+import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/services/analytics_service.dart';
 import 'package:zeta_hackathon/services/authentication_service.dart';
 import 'package:zeta_hackathon/services/cache_service.dart';
@@ -26,11 +27,13 @@ Future<void> init() async {
         sl<AuthenticationService>(),
         sl<IdentityService>(),
       ));
-  sl.registerFactory<ChildHomepageController>(() => ChildHomepageController(
-        sl<DatabaseService>(),
-        sl<IdentityService>(),
-        sl<AuthenticationService>(),
-      ));
+  sl.registerFactoryParam<ChildHomepageController, String?, void>(
+      (p1, _) => ChildHomepageController(
+            sl<DatabaseService>(),
+            sl<IdentityService>(),
+            sl<AuthenticationService>(),
+            sl<ScannerService>(),
+          )..initialize(parentId: p1));
   sl.registerFactory<ParentHomepageController>(() => ParentHomepageController(
         sl<DatabaseService>(),
         sl<AnalyticsService>(),
@@ -49,11 +52,12 @@ Future<void> init() async {
         sl<DatabaseService>(),
         sl<IdentityService>(),
       )..initialize());
-  sl.registerFactory<TransactionController>(() => TransactionController(
-        sl<TransactionService>(),
-        sl<IdentityService>(),
-        sl<ScannerService>(),
-      ));
+  sl.registerFactoryParam<TransactionController, UserObject, void>(
+      (p1, _) => TransactionController(
+            p1,
+            sl<TransactionService>(),
+            sl<IdentityService>(),
+          ));
   sl.registerFactory<SignUpController>(() => SignUpController(
         sl<AuthenticationService>(),
         sl<DatabaseService>(),
