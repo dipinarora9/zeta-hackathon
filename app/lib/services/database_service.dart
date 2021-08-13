@@ -90,8 +90,12 @@ class DatabaseService {
     try {
       DocumentSnapshot snapshot =
           await childCollection(parentID).doc(childID).get();
-      Child child = Child.fromJson(snapshot.data() as Map<String, dynamic>);
-      return AppResponse(data: child);
+      if (snapshot.exists) {
+        Child child = snapshot.data() as Child;
+        return AppResponse(data: child);
+      } else
+        throw Exception(
+            'Child doesn\'t exist - PID = $parentID CID - $childID');
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
     } catch (e) {
@@ -134,6 +138,19 @@ class DatabaseService {
       await childCollection(child.parentId)
           .doc(child.userId)
           .update(child.toJson());
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
+
+  Future<AppResponse<bool>> updateBalance(Child child, double amount) async {
+    try {
+      await childCollection(child.parentId)
+          .doc(child.userId)
+          .update({'balance': FieldValue.increment(amount)});
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);

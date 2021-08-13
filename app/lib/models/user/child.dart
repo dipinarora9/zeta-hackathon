@@ -106,7 +106,8 @@ class Child extends CustomUser {
 
   bool isEmpty() => userId == '';
 
-  UserObject toUserObject() => UserObject(name: username, id: userId);
+  UserObject toUserObject() =>
+      UserObject(name: username, id: userId, parentId: parentId);
 }
 
 PocketMoneyDetails pocketMoneyDetailsFromJson(String str) =>

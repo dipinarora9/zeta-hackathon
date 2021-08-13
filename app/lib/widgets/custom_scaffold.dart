@@ -7,7 +7,6 @@ class CustomScaffold extends StatelessWidget {
   final String title;
   final List<Widget>? actions;
   final bool showBackButton;
-  final GlobalKey<ScaffoldState>? sKey;
 
   const CustomScaffold(
       {Key? key,
@@ -16,14 +15,12 @@ class CustomScaffold extends StatelessWidget {
       this.leadingWidget,
       this.actions,
       this.floatingActionButton,
-      this.sKey,
       this.showBackButton = true})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: sKey ?? key,
       appBar: AppBar(
         actions: actions,
         leading: showBackButton

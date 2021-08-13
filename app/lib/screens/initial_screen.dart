@@ -4,9 +4,14 @@ import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
 import '../routes.dart';
 
-class InitialScreen extends StatelessWidget {
+class InitialScreen extends StatefulWidget {
   const InitialScreen({Key? key}) : super(key: key);
 
+  @override
+  _InitialScreenState createState() => _InitialScreenState();
+}
+
+class _InitialScreenState extends State<InitialScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(

@@ -53,11 +53,12 @@ class AuthenticationService {
     }
   }
 
-  Future<AppResponse<bool>> sendLoginLinkToChild(String email) async {
+  Future<AppResponse<bool>> sendLoginLinkToChild(
+      String email, String childId) async {
     try {
       var acs = ActionCodeSettings(
           url:
-              'https://zetahackdipinprashant.page.link?email=$email&parent_id=${FirebaseAuth.instance.currentUser!.uid}',
+              'https://zetahackdipinprashant.page.link?email=$email&child_id=$childId&parent_id=${FirebaseAuth.instance.currentUser!.uid}',
           handleCodeInApp: true,
           androidPackageName: 'com.example.zeta_hackathon',
           androidMinimumVersion: '16',

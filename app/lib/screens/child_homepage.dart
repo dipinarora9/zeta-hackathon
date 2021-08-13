@@ -6,34 +6,42 @@ import 'package:zeta_hackathon/widgets/balance_widget.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
 class ChildHomepageScreen extends StatelessWidget {
-  const ChildHomepageScreen({Key? key}) : super(key: key);
+  ChildHomepageScreen({Key? key}) : super(key: key);
+  final GlobalKey<RefreshIndicatorState> refreshKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
+    final childHomepageController =
+        Provider.of<ChildHomepageController>(context);
     return CustomScaffold(
-      title: 'Hi Name',
+      title: 'Hi ${childHomepageController.child?.username ?? 'Name'}',
       showBackButton: false,
       leadingWidget: IconButton(
-        onPressed: () =>
-            context.read<ChildHomepageController>().logout(context),
+        onPressed: () => childHomepageController.logout(context),
         icon: Icon(Icons.logout),
       ),
       actions: [
         IconButton(
-          onPressed: () =>
-              context.read<ChildHomepageController>().generateQR(context),
+          onPressed: () => childHomepageController.generateQR(context),
           icon: Icon(Icons.code),
         )
       ],
-      body: Column(
-        children: [
-          BalanceWidget(),
-          AnalyticsWidget(),
-        ],
+      body: SingleChildScrollView(
+        child: RefreshIndicator(
+          key: refreshKey,
+          onRefresh: () async => childHomepageController.fetchChildDetails(),
+          child: Column(
+            children: [
+              if (childHomepageController.child != null)
+                BalanceWidget(child: childHomepageController.child!),
+              AnalyticsWidget(),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () =>
-            context.read<ChildHomepageController>().scanQR(context),
+        onPressed: () => childHomepageController.scanQR(context),
         label: Text('Scan QR'),
       ),
     );

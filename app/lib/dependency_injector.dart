@@ -27,13 +27,12 @@ Future<void> init() async {
         sl<AuthenticationService>(),
         sl<IdentityService>(),
       ));
-  sl.registerFactoryParam<ChildHomepageController, String?, void>(
-      (p1, _) => ChildHomepageController(
-            sl<DatabaseService>(),
-            sl<IdentityService>(),
-            sl<AuthenticationService>(),
-            sl<ScannerService>(),
-          )..initialize(parentId: p1));
+  sl.registerFactory<ChildHomepageController>(() => ChildHomepageController(
+        sl<DatabaseService>(),
+        sl<IdentityService>(),
+        sl<AuthenticationService>(),
+        sl<ScannerService>(),
+      )..initialize());
   sl.registerFactory<ParentHomepageController>(() => ParentHomepageController(
         sl<DatabaseService>(),
         sl<AnalyticsService>(),
@@ -69,7 +68,8 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthenticationService>(
       () => AuthenticationService());
   sl.registerLazySingleton<DatabaseService>(() => DatabaseService());
-  sl.registerLazySingleton<CacheService<String>>(() => CacheService<String>());
+  sl.registerSingleton<CacheService<String>>(
+      CacheService<String>()..initialize());
   sl.registerLazySingleton<ScannerService>(() => ScannerService());
   sl.registerLazySingleton<IdentityService>(
       () => IdentityService(sl<CacheService<String>>()));

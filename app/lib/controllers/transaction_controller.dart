@@ -8,14 +8,24 @@ import 'package:zeta_hackathon/services/transaction_service.dart';
 class TransactionController with ChangeNotifier {
   final TransactionService transactionService;
   final IdentityService identityService;
+  final TextEditingController amountController;
   UserObject receiver;
 
   TransactionController(
-      this.receiver, this.transactionService, this.identityService);
+      this.receiver, this.transactionService, this.identityService)
+      : amountController = TextEditingController(text: '0');
 
-  sendMoney(BuildContext context, double amount) async {
-    AppResponse<bool> response =
-        await transactionService.createTransaction(amount, receiver);
+  sendMoney(BuildContext context) async {
+    if (double.tryParse(amountController.text) == null) {
+      UIHelper.showToast(msg: 'Please enter amount correctly.');
+      return;
+    }
+    if (double.parse(amountController.text) <= 0) {
+      UIHelper.showToast(msg: 'Amount should be greater than 0');
+      return;
+    }
+    AppResponse<bool> response = await transactionService.createTransaction(
+        double.parse(amountController.text), receiver);
     if (response.isSuccess()) {
       UIHelper.showToast(msg: 'Paid successfully!');
       Navigator.of(context).pop();

@@ -62,27 +62,33 @@ class UserObject {
   UserObject({
     required this.name,
     required this.id,
+    required this.parentId,
   });
 
   final String name;
   final String id;
+  final String parentId;
 
   UserObject copyWith({
     String? name,
     String? id,
+    String? parentId,
   }) =>
       UserObject(
         name: name ?? this.name,
         id: id ?? this.id,
+        parentId: parentId ?? this.parentId,
       );
 
   factory UserObject.fromJson(Map<String, dynamic> json) => UserObject(
         name: json["name"],
         id: json["id"],
+        parentId: json["parent_id"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "id": id,
+        "parent_id": parentId,
       };
 }

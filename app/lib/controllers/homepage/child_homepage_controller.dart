@@ -15,6 +15,7 @@ class ChildHomepageController with ChangeNotifier {
   final AuthenticationService authenticationService;
   final IdentityService identityService;
   final ScannerService scannerService;
+  Child? _child;
 
   ChildHomepageController(
     this.databaseService,
@@ -23,10 +24,11 @@ class ChildHomepageController with ChangeNotifier {
     this.scannerService,
   );
 
-  initialize({String? parentId}) {
+  Child? get child => _child;
+
+  initialize() {
     fetchChildDetails();
     fetchAnalytics();
-    if (parentId != null) identityService.setParentId(parentId);
   }
 
   scanQR(BuildContext context) async {
@@ -47,13 +49,17 @@ class ChildHomepageController with ChangeNotifier {
       UIHelper.showToast(msg: response.error);
   }
 
-  void fetchChildDetails() async {
+  Future<void> fetchChildDetails() async {
     AppResponse<Child> response = await databaseService.fetchChildDetails(
         identityService.getParentId()!, identityService.getUID());
     if (response.isSuccess()) {
+      _child = response.data!;
       notifyListeners();
-    } else
+    } else {
+      debugPrint("HERE IS IT ${response.error}");
       UIHelper.showToast(msg: response.error);
+    }
+    return;
   }
 
   void fetchAnalytics() {}
@@ -61,6 +67,7 @@ class ChildHomepageController with ChangeNotifier {
   void logout(BuildContext context) async {
     await authenticationService.signOut();
     identityService.removeParentId();
+    identityService.removeUserId();
     Navigator.of(context).pushReplacementNamed(Routes.initialScreen);
   }
 }

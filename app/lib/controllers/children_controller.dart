@@ -52,15 +52,8 @@ class ChildrenController with ChangeNotifier {
   }
 
   saveChild(BuildContext context) async {
-    if (child.userId == "") {
-      AppResponse<bool> signUpResponse = await authenticationService
-          .sendLoginLinkToChild(emailController.text);
-      if (!signUpResponse.isSuccess()) {
-        debugPrint(signUpResponse.error);
-        UIHelper.showToast(msg: signUpResponse.error);
-        return;
-      } else
-        UIHelper.showToast(msg: 'Invite sent!');
+    bool newChild = child.userId == "";
+    if (newChild) {
       DateTime d = DateTime.now().toUtc();
       child = child.copyWith(
         createdDate: DateTime(d.year, d.month, d.day).millisecondsSinceEpoch,
@@ -82,6 +75,16 @@ class ChildrenController with ChangeNotifier {
     AppResponse<String> response = await databaseService.addChildDetails(child);
     if (response.isSuccess()) {
       child = child.copyWith(userId: response.data);
+      if (newChild) {
+        AppResponse<bool> signUpResponse = await authenticationService
+            .sendLoginLinkToChild(emailController.text, child.userId);
+        if (!signUpResponse.isSuccess()) {
+          debugPrint(signUpResponse.error);
+          UIHelper.showToast(msg: signUpResponse.error);
+          return;
+        } else
+          UIHelper.showToast(msg: 'Invite sent!');
+      }
       notifyListeners();
       UIHelper.showToast(msg: 'Saved');
       Navigator.of(context).pop();
@@ -90,8 +93,8 @@ class ChildrenController with ChangeNotifier {
   }
 
   resendInvite() async {
-    AppResponse<bool> signUpResponse =
-        await authenticationService.sendLoginLinkToChild(emailController.text);
+    AppResponse<bool> signUpResponse = await authenticationService
+        .sendLoginLinkToChild(emailController.text, child.userId);
     if (!signUpResponse.isSuccess()) {
       debugPrint(signUpResponse.error);
       UIHelper.showToast(msg: signUpResponse.error);

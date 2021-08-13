@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
-import 'package:zeta_hackathon/services/dynamic_links_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 import 'package:zeta_hackathon/widgets/qr_widget.dart';
 
@@ -24,6 +23,7 @@ import 'screens/initial_screen.dart';
 import 'screens/modify_child_screen.dart';
 import 'screens/pocket_money_plans_screen.dart';
 import 'screens/transaction_screen.dart';
+import 'services/dynamic_links_service.dart';
 
 class Routes {
   static final di = sl.sl;
@@ -52,7 +52,7 @@ class Routes {
     String? parentId = di<IdentityService>().getParentId();
     if (routeSettings.name == Routes.initialScreen &&
         uid != '' &&
-        parentId == null)
+        (parentId == null || parentId == ''))
       return MaterialPageRoute(
         builder: (BuildContext context) => ChangeNotifierProvider(
           child: HomepageScreen(),
@@ -61,87 +61,86 @@ class Routes {
       );
     else if (routeSettings.name == Routes.initialScreen &&
         uid != '' &&
-        parentId != null)
+        parentId != null &&
+        parentId != '')
       return MaterialPageRoute(
         builder: (BuildContext context) => ChangeNotifierProvider(
           child: ChildHomepageScreen(),
           create: (_) => di<ChildHomepageController>(),
         ),
       );
-    if (staticRoutes[routeSettings.name] != null) {
+    else if (staticRoutes[routeSettings.name] != null) {
       return MaterialPageRoute(
           builder: staticRoutes[routeSettings.name]!, settings: routeSettings);
-    }
-    switch (routeSettings.name) {
-      case Routes.homepage:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: HomepageScreen(),
-            create: (_) => di<ParentHomepageController>(),
-          ),
-        );
-      case Routes.homepageChild:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: ChildHomepageScreen(),
-            create: (_) => di<ChildHomepageController>(
-              param1: routeSettings.arguments != null
-                  ? (routeSettings.arguments as String)
-                  : null,
+    } else
+      switch (routeSettings.name) {
+        case Routes.homepage:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: HomepageScreen(),
+              create: (_) => di<ParentHomepageController>(),
             ),
-          ),
-        );
-      case Routes.qrScreen:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => QRWidget(
-            data: routeSettings.arguments as String,
-          ),
-        );
-      case Routes.modifyChild:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: ModifyChildScreen(),
-            create: (_) => di<ChildrenController>(
-                param1: routeSettings.arguments as Child),
-          ),
-        );
-      case Routes.signUp:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: SignUpScreen(),
-            create: (_) => di<SignUpController>(),
-          ),
-        );
-      case Routes.loginParent:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: ParentLogin(),
-            create: (_) => di<LoginController>(),
-          ),
-        );
-      case Routes.loginChild:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: ChildLogin(),
-            create: (_) => di<LoginController>(),
-          ),
-        );
-      case Routes.pocketMoneyPlans:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: PocketMoneyPlanScreen(),
-            create: (_) => di<PocketMoneyPlanController>(),
-          ),
-        );
-      case Routes.transactionScreen:
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ChangeNotifierProvider(
-            child: TransactionScreen(),
-            create: (_) => di<TransactionController>(
-              param1: routeSettings.arguments as UserObject,
+          );
+        case Routes.homepageChild:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: ChildHomepageScreen(),
+              create: (_) => di<ChildHomepageController>(),
             ),
-          ),
-        );
-    }
+          );
+        case Routes.qrScreen:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => QRScreen(
+              data: routeSettings.arguments as String,
+            ),
+          );
+        case Routes.modifyChild:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: ModifyChildScreen(),
+              create: (_) => di<ChildrenController>(
+                  param1: routeSettings.arguments as Child),
+            ),
+          );
+        case Routes.signUp:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: SignUpScreen(),
+              create: (_) => di<SignUpController>(),
+            ),
+          );
+        case Routes.loginParent:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: ParentLogin(),
+              create: (_) => di<LoginController>(),
+            ),
+          );
+        case Routes.loginChild:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: ChildLogin(),
+              create: (_) => di<LoginController>(),
+            ),
+          );
+        case Routes.pocketMoneyPlans:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: PocketMoneyPlanScreen(),
+              create: (_) => di<PocketMoneyPlanController>(),
+            ),
+          );
+        case Routes.transactionScreen:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: TransactionScreen(),
+              create: (_) => di<TransactionController>(
+                param1: routeSettings.arguments as UserObject,
+              ),
+            ),
+          );
+        default:
+          return MaterialPageRoute(builder: (_) => InitialScreen());
+      }
   }
 }

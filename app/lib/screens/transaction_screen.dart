@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zeta_hackathon/controllers/transaction_controller.dart';
 import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
 
@@ -7,8 +9,10 @@ class TransactionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final transactionController =
+        Provider.of<TransactionController>(context, listen: false);
     return CustomScaffold(
-      title: 'Send Money',
+      title: 'Send Money to ${transactionController.receiver.name}',
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -25,7 +29,7 @@ class TransactionScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: EditableText(
-                  controller: TextEditingController(text: '0'),
+                  controller: transactionController.amountController,
                   focusNode: FocusNode(),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -40,7 +44,10 @@ class TransactionScreen extends StatelessWidget {
               ),
             ],
           ),
-          CustomButton(onPressed: () {}, text: 'Pay'),
+          CustomButton(
+            onPressed: () => transactionController.sendMoney(context),
+            text: 'Pay',
+          ),
         ],
       ),
     );
