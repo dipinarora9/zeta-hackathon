@@ -2,6 +2,7 @@ const functions = require("firebase-functions");
 const firebase = require('firebase-admin');
 let firebaseApp = firebase.initializeApp();
 var db = firebaseApp.firestore();
+var messaging = admin.messaging();
 
 exports.pocketMoneyUpdater = functions.https.onRequest(async (request, response) => {
     const time = getTimestamp(new Date());
@@ -61,3 +62,20 @@ function getTimestamp(date) {
     const d = new Date(Date.UTC(yyyy, mm, dd, 0, 0, 0));
     return d.getTime() / 1000;
 }
+
+exports.sendNotification = functions.https.onRequest(async (request, response) => {
+    messaging.send({
+        token: request.parent_id,
+        data: {
+            "amount": request.amount,
+            "reason": request.reason,
+            "child_id": request.childId,
+            "parent_id": request.parentId,
+            "budget_exceeded": request.budgetExceeded,
+        },
+        // Set Android priority to "high"
+        android: {
+            priority: "high",
+        },
+    });
+});
