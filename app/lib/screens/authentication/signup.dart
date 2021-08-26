@@ -35,9 +35,8 @@ class SignUpScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                keyboardType: TextInputType.number,
-                controller: signupController.aadhaarController,
-                decoration: InputDecoration(labelText: 'Aadhar Number'),
+                controller: signupController.panController,
+                decoration: InputDecoration(labelText: 'PAN'),
               ),
             ),
             Padding(

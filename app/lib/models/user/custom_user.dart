@@ -3,7 +3,7 @@ abstract class CustomUser {
     required this.userId,
     required this.createdDate,
     required this.username,
-    required this.aadhaarNumber,
+    required this.pan,
     required this.isParent,
     required this.email,
     required this.dob,
@@ -13,7 +13,7 @@ abstract class CustomUser {
   final String email;
   final String username;
   final int createdDate;
-  final int aadhaarNumber;
+  final String pan;
   final bool isParent;
   final DateTime dob;
 }

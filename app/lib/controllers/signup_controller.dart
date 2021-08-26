@@ -13,7 +13,7 @@ class SignUpController with ChangeNotifier {
   final CloudFunctionsService cloudFunctionsService;
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  final TextEditingController aadhaarController;
+  final TextEditingController panController;
   final TextEditingController usernameController;
 
   final TextEditingController mobileController;
@@ -21,11 +21,11 @@ class SignUpController with ChangeNotifier {
 
   SignUpController(this.authenticationService, this.databaseService,
       this.cloudFunctionsService)
-      : emailController = TextEditingController(),
-        passwordController = TextEditingController(),
-        aadhaarController = TextEditingController(),
-        usernameController = TextEditingController(),
-        mobileController = TextEditingController(),
+      : emailController = TextEditingController(text: 'a@f.com'),
+        passwordController = TextEditingController(text: '1234567'),
+        panController = TextEditingController(text: '12345'),
+        usernameController = TextEditingController(text: 'abc'),
+        mobileController = TextEditingController(text: '987654'),
         _dob = DateTime(1970, 4, 1);
 
   signUp() async {
@@ -42,16 +42,17 @@ class SignUpController with ChangeNotifier {
       mobile: int.parse(mobileController.text),
       userId: signUpResponse.data!,
       createdDate: DateTime.now().toUtc().millisecondsSinceEpoch,
-      aadhaarNumber: int.parse(aadhaarController.text),
+      pan: panController.text,
       isParent: true,
       username: usernameController.text,
       email: emailController.text,
       dob: _dob,
     );
-
+    debugPrint('HERE IS IT GOT HERE');
     AppResponse<Parent> fusionResponse =
         await cloudFunctionsService.signUpParent(parent);
     if (!fusionResponse.isSuccess()) {
+      debugPrint('HERE IS IT ${fusionResponse.error}');
       UIHelper.showToast(msg: fusionResponse.error);
       return;
     }

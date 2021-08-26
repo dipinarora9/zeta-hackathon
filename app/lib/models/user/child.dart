@@ -15,7 +15,7 @@ class Child extends CustomUser {
     required this.parentId,
     required userId,
     required createdDate,
-    required aadhaarNumber,
+    required pan,
     required isParent,
     required username,
     required email,
@@ -23,7 +23,7 @@ class Child extends CustomUser {
   }) : super(
           userId: userId,
           createdDate: createdDate,
-          aadhaarNumber: aadhaarNumber,
+          pan: pan,
           isParent: isParent,
           username: username,
           email: email,
@@ -38,7 +38,7 @@ class Child extends CustomUser {
         super(
           userId: '',
           createdDate: 0,
-          aadhaarNumber: 0,
+          pan: '',
           isParent: false,
           username: '',
           email: '',
@@ -56,7 +56,7 @@ class Child extends CustomUser {
     double? balance,
     String? userId,
     int? createdDate,
-    int? aadhaarNumber,
+    String? pan,
     String? username,
     bool? isParent,
     String? email,
@@ -70,7 +70,7 @@ class Child extends CustomUser {
         balance: balance ?? this.balance,
         userId: userId ?? this.userId,
         createdDate: createdDate ?? this.createdDate,
-        aadhaarNumber: aadhaarNumber ?? this.aadhaarNumber,
+        pan: pan ?? this.pan,
         isParent: isParent ?? this.isParent,
         username: username ?? this.username,
         email: email ?? this.email,
@@ -88,8 +88,7 @@ class Child extends CustomUser {
         balance: json["balance"] == null ? null : json["balance"].toDouble(),
         userId: json["user_id"] == null ? null : json["user_id"],
         createdDate: json["created_date"] == null ? null : json["created_date"],
-        aadhaarNumber:
-            json["aadhaar_number"] == null ? null : json["aadhaar_number"],
+        pan: json["pan"] == null ? null : json["pan"],
         isParent: json["is_parent"] == null ? null : json["is_parent"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
@@ -104,7 +103,7 @@ class Child extends CustomUser {
         "balance": balance,
         "user_id": userId,
         "created_date": createdDate,
-        "aadhaar_number": aadhaarNumber,
+        "pan": pan,
         "is_parent": isParent,
         "username": username,
         "email": email,
@@ -118,8 +117,8 @@ class Child extends CustomUser {
           "kycStatus": "MINIMAL",
           "kycStatusPostExpiry": "string",
           "kycAttributes": {},
-          "authData": {"AADHAR": aadhaarNumber},
-          "authType": "AADHAR"
+          "authData": {"PAN": pan},
+          "authType": "PAN"
         },
         "vectors": [
           {"type": "e", "value": email, "isVerified": false}

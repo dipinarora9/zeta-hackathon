@@ -16,7 +16,7 @@ class ChildrenController with ChangeNotifier {
   final AuthenticationService authenticationService;
   final TextEditingController emailController;
   final TextEditingController usernameController;
-  final TextEditingController aadhaarController;
+  final TextEditingController panController;
   String? _currentSelectedPlan;
   bool _permissionRequired;
   Map<String, PocketMoney> _plans;
@@ -24,8 +24,7 @@ class ChildrenController with ChangeNotifier {
   ChildrenController(this.child, this.authenticationService,
       this.databaseService, this.identityService, this.cloudFunctionsService)
       : emailController = TextEditingController(text: child.email),
-        aadhaarController =
-            TextEditingController(text: child.aadhaarNumber.toString()),
+        panController = TextEditingController(text: child.pan),
         usernameController = TextEditingController(text: child.username),
         _currentSelectedPlan = child.pocketMoneyDetails?.pocketMoneyPlanId,
         _permissionRequired = child.paymentPermissionRequired,
@@ -59,7 +58,7 @@ class ChildrenController with ChangeNotifier {
       DateTime d = DateTime.now().toUtc();
       child = child.copyWith(
         createdDate: DateTime(d.year, d.month, d.day).millisecondsSinceEpoch,
-        aadhaarNumber: int.parse(aadhaarController.text),
+        pan: panController.text,
         isParent: false,
         username: usernameController.text,
         email: emailController.text,
@@ -69,7 +68,7 @@ class ChildrenController with ChangeNotifier {
       );
     }
     child = child.copyWith(
-      aadhaarNumber: int.parse(aadhaarController.text),
+      pan: panController.text,
       username: usernameController.text,
       email: emailController.text,
       paymentPermissionRequired: _permissionRequired,

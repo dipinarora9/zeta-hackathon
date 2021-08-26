@@ -13,12 +13,15 @@ class CloudFunctionsService {
       HttpsCallable callable = functions.httpsCallable('ParentSignUp');
 
       final results = await callable(parent.toFusionAPIJson());
-      print(results.data);
+      print("HERE IS IT");
+      print(results.data.toString());
       //todo: add account number
       return AppResponse(data: parent.copyWith(accountNumber: 123));
     } on FirebaseException catch (e) {
+      print('HERE IS IT error ${e.message}');
       return AppResponse(error: e.message);
     } catch (e) {
+      print('HERE IS IT error $e');
       return AppResponse(error: e.toString());
     }
   }
