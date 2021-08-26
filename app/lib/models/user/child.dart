@@ -13,6 +13,7 @@ class Child extends CustomUser {
     required this.balance,
     required this.paymentPermissionRequired,
     required this.parentId,
+    required this.poolAccountID,
     required userId,
     required createdDate,
     required pan,
@@ -34,6 +35,7 @@ class Child extends CustomUser {
       : balance = 0,
         paymentPermissionRequired = false,
         parentId = '',
+        poolAccountID = '',
         pocketMoneyDetails = null,
         super(
           userId: '',
@@ -48,6 +50,7 @@ class Child extends CustomUser {
   final bool paymentPermissionRequired;
   final PocketMoneyDetails? pocketMoneyDetails;
   final double balance;
+  final String poolAccountID;
 
   Child copyWith({
     String? parentId,
@@ -61,6 +64,7 @@ class Child extends CustomUser {
     bool? isParent,
     String? email,
     DateTime? dob,
+    String? poolAccountID,
   }) =>
       Child(
         parentId: parentId ?? this.parentId,
@@ -75,6 +79,7 @@ class Child extends CustomUser {
         username: username ?? this.username,
         email: email ?? this.email,
         dob: dob ?? this.dob,
+        poolAccountID: poolAccountID ?? this.poolAccountID,
       );
 
   factory Child.fromJson(Map<String, dynamic> json) => Child(
@@ -92,6 +97,8 @@ class Child extends CustomUser {
         isParent: json["is_parent"] == null ? null : json["is_parent"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
+        poolAccountID:
+            json["pool_account_id"] == null ? null : json["pool_account_id"],
         dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
       );
 
@@ -107,10 +114,11 @@ class Child extends CustomUser {
         "is_parent": isParent,
         "username": username,
         "email": email,
+        "pool_account_id": poolAccountID,
         "dob": dob.toIso8601String(),
       };
 
-  Map<String, dynamic> toFusionAPIJson() => {
+  Map<String, dynamic> toFusionAPIJson(String targetAccountID) => {
         "firstName": username,
         "dob": {"year": dob.year, "month": dob.month, "day": dob.day},
         "kycDetails": {
@@ -123,6 +131,7 @@ class Child extends CustomUser {
         "vectors": [
           {"type": "e", "value": email, "isVerified": false}
         ],
+        'targetAccountID': targetAccountID
       };
 
   bool isEmpty() => userId == '';
@@ -131,7 +140,7 @@ class Child extends CustomUser {
         name: username,
         id: userId,
         parentId: parentId,
-        email: email,
+        accountId: poolAccountID,
       );
 }
 

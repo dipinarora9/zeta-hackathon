@@ -20,6 +20,7 @@ class ModifyChildScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: childrenController.emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(labelText: 'Email'),
               ),
             ),

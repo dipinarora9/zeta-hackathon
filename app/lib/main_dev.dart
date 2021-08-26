@@ -15,7 +15,7 @@ void main() async {
   await Firebase.initializeApp();
   try {
     FirebaseFirestore.instance.settings =
-        Settings(host: '192.168.1.5:3000', sslEnabled: false);
+        Settings(host: '192.168.1.5:8004', sslEnabled: false);
     FirebaseAuth.instance.useAuthEmulator('192.168.1.5', 9099);
     FirebaseFunctions.instance.useFunctionsEmulator('192.168.1.5', 5001);
     FirebaseAuth.instance.setSettings(appVerificationDisabledForTesting: true);

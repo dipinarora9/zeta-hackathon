@@ -1,7 +1,4 @@
 const functions = require("firebase-functions");
-const firebase = require('firebase-admin');
-let firebaseApp = firebase.initializeApp();
-var db = firebaseApp.firestore();
 const { v4: uuidv4 } = require('uuid');
 const fetch = require("node-fetch");
 
@@ -16,6 +13,9 @@ const fusion_obj = {
 // var messaging = admin.messaging();
 
 exports.pocketMoneyUpdater = functions.https.onRequest(async (request, response) => {
+    const firebase = require('firebase-admin');
+    let firebaseApp = firebase.initializeApp({});
+    var db = firebaseApp.firestore();
     const time = getTimestamp(new Date());
     // fetch docs of users(parent) with latest renewal date as today 12AM 
     let users = await db.collection('users').where('latest_renewal_date', '==', time).get();
@@ -167,6 +167,7 @@ async function issueBundle(bundleName, accountHolderID, email) {
                 body: JSON.stringify(formData),
             });
             let issueResponseData = await issueResponse.json();
+
             if (issueResponse.status !== 200) {
                 reject({
                     'status': 'FAIL',
@@ -198,9 +199,10 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
     // create acc holder
     // issue bundle -> name: parent account
     // pool account create
-    let res = await new Promise(async (resolve, reject) => {
+    let temp = data;
+    return new Promise(async (resolve, reject) => {
         try {
-            let params = ḍata;
+            let params = temp;
             // let params = request.body;
             params.ifiID = fusion_obj.IFIID;
             params.individualType = 'REAL';
@@ -215,7 +217,7 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
                 });
             } else {
                 // issue bundle -> bundle name, id, email
-                let accountPaymentProducts = await issueBundle('parent account', data.individualID, params.vectors[0].email);
+                let accountPaymentProducts = await issueBundle('parent account', data.individualID, params.vectors[0].value);
 
                 // account id, accountHolderID , resource id
                 let formData = {
@@ -232,6 +234,7 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
                     body: JSON.stringify(formData),
                 });
                 let issueAccountResponseData = await issueAccountResponse.json();
+                console.log(issueAccountResponseData);
 
                 if (issueAccountResponse.status !== 200) {
                     reject({
@@ -239,6 +242,7 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
                         'message': issueAccountResponseData.message
                     });
                 } else {
+                    accountPaymentProducts.poolAccountID = issueAccountResponseData.accountID;
                     resolve(accountPaymentProducts);
                 }
             }
@@ -262,17 +266,16 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
     // create acc holder
     // issue bundle -> name: child account
     // map paymentProduct to parents pool account
-
-    let res = await new Promise(async (resolve, reject) => {
+    let temp = data;
+    return new Promise(async (resolve, reject) => {
         try {
-            let params = data;
+            let params = temp;
             // let params = request.body;
             let targetAccountID = params.targetAccountID;
             delete params.targetAccountID;
             params.ifiID = fusion_obj.IFIID;
             params.individualType = 'REAL';
             params.applicationType = "CREATE_ACCOUNT_HOLDER";
-
 
             let data = await createNewIndividual(params);
 
@@ -282,8 +285,8 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
                     "message": data.message
                 });
             } else {
-                let accountPaymentProducts = await issueBundle('parent account', data.individualID, params.vectors[0].email);
-
+                let accountPaymentProducts = await issueBundle('parent account', data.individualID, params.vectors[0].value);
+                console.log(accountPaymentProducts);
                 let paymentResourceID = accountPaymentProducts.resourceID;
 
                 let mapResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/resources/${paymentResourceID}/target`, {
@@ -314,9 +317,8 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
                 'message': err.message
             });
         }
-    })
+    });
     // response.send(res);
-    return res;
 });
 // exports.A2ATransaction = functions.https.onRequest(async (request, response) => {
 exports.A2ATransaction = functions.https.onCall(async (data, context) => {
@@ -325,7 +327,8 @@ exports.A2ATransaction = functions.https.onCall(async (data, context) => {
             'while authenticated.');
     }
     // make transaction
-    let res = await new Promise(async (resolve, reject) => {
+
+    return new Promise(async (resolve, reject) => {
         try {
             let params = data;
             // let params = request.body;
@@ -345,7 +348,7 @@ exports.A2ATransaction = functions.https.onCall(async (data, context) => {
         }
     });
     // response.send(res);
-    return res;
+    // return res;
 });
 
 // exports.checkBalance = functions.https.onRequest(async (request, response) => {
@@ -355,7 +358,7 @@ exports.checkBalance = functions.https.onCall(async (data, conext) => {
             'while authenticated.');
     }
     // check balance
-    let res = await new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let accountID = data.accountID;
             // let accountID = request.body.accountID;
@@ -392,11 +395,11 @@ exports.checkBalance = functions.https.onCall(async (data, conext) => {
     })
 
     // response.send(res);
-    return res;
+    // return res;
 });
 
 exports.getAccountDetails = functions.https.onRequest(async (request, response) => {
-    // get the details of all accounts and id of that user
+    response.send("HEY");
 })
 
 async function doTransaction(creditAccountID, debitAccountID, amount) {

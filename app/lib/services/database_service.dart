@@ -31,11 +31,12 @@ class DatabaseService {
   Future<AppResponse<bool>> saveParentDetails(Parent parent) async {
     try {
       await parentCollection.doc(parent.userId).set(parent);
-
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
+      print("HERE IS IT error ${e.message}");
       return AppResponse(error: e.message);
     } catch (e) {
+      print("HERE IS IT error $e");
       return AppResponse(error: e.toString());
     }
   }

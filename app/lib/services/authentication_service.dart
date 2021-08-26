@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:zeta_hackathon/helpers/app_response.dart';
 
+import '../dependency_injector.dart';
+import 'identitiy_service.dart';
+
 class AuthenticationService {
   Future<AppResponse<String>> loginAsParent(
       String email, String password) async {
@@ -41,6 +44,25 @@ class AuthenticationService {
     }
   }
 
+  Future<AppResponse<bool>> loginUsingOOBCode(String actionCode) async {
+    try {
+      var auth = FirebaseAuth.instance;
+
+      await auth.checkActionCode(actionCode);
+      await auth.applyActionCode(actionCode);
+
+      // If successful, reload the user:
+      await auth.currentUser?.reload();
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      print('HERE IS IT error ${e.message}');
+      return AppResponse(error: e.message);
+    } catch (e, st) {
+      print('HERE IS IT error $e \n$st');
+      return AppResponse(error: e.toString());
+    }
+  }
+
   Future<AppResponse<String>> signUp(String email, String password) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -56,9 +78,11 @@ class AuthenticationService {
   Future<AppResponse<bool>> sendLoginLinkToChild(
       String email, String childId) async {
     try {
+      IdentityService identityService = sl<IdentityService>();
+
       var acs = ActionCodeSettings(
           url:
-              'https://zetahackdipinprashant.page.link?email=$email&child_id=$childId&parent_id=${FirebaseAuth.instance.currentUser!.uid}',
+              'https://zetahackdipinprashant.page.link?email=$email&child_id=$childId&parent_id=${FirebaseAuth.instance.currentUser!.uid}&pool_account_id=${identityService.getPoolAccountId()}',
           handleCodeInApp: true,
           androidPackageName: 'com.example.zeta_hackathon',
           androidMinimumVersion: '16',

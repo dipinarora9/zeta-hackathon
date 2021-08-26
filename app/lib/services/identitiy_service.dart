@@ -19,7 +19,26 @@ class IdentityService {
 
   String? getParentId() {
     AppResponse<String?> response = cacheService.getData('parentId');
-    print('HERE IS IT dipin ${response.data}');
+    return response.data;
+  }
+
+  String? getAccountId() {
+    AppResponse<String?> response = cacheService.getData('accountId');
+    return response.data;
+  }
+
+  String? getPoolAccountId() {
+    AppResponse<String?> response = cacheService.getData('poolAccountId');
+    return response.data;
+  }
+
+  String? getAccountHolderId() {
+    AppResponse<String?> response = cacheService.getData('accountHolderId');
+    return response.data;
+  }
+
+  String? getResourceId() {
+    AppResponse<String?> response = cacheService.getData('resourceId');
     return response.data;
   }
 
@@ -37,6 +56,36 @@ class IdentityService {
 
   Future<void> setUserId(String id) async {
     AppResponse<bool> response = await cacheService.putData('userId', id);
+    if (!response.isSuccess()) {
+      throw Exception(response.error);
+    }
+  }
+
+  Future<void> setAccountId(String id) async {
+    AppResponse<bool> response = await cacheService.putData('accountId', id);
+    if (!response.isSuccess()) {
+      throw Exception(response.error);
+    }
+  }
+
+  Future<void> setAccountHolderId(String id) async {
+    AppResponse<bool> response =
+        await cacheService.putData('accountHolderId', id);
+    if (!response.isSuccess()) {
+      throw Exception(response.error);
+    }
+  }
+
+  Future<void> setPoolAccountId(String id) async {
+    AppResponse<bool> response =
+        await cacheService.putData('poolAccountId', id);
+    if (!response.isSuccess()) {
+      throw Exception(response.error);
+    }
+  }
+
+  Future<void> setResourceId(String id) async {
+    AppResponse<bool> response = await cacheService.putData('resourceId', id);
     if (!response.isSuccess()) {
       throw Exception(response.error);
     }

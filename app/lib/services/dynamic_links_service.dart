@@ -11,17 +11,17 @@ import '../dependency_injector.dart';
 class DynamicLinks {
   static handleDynamicLink(BuildContext context) async {
     FirebaseDynamicLinks.instance.getInitialLink().then(
-        (data) => data != null ? _parseDynamicLinkData(context, data) : null);
+        (data) => data != null ? parseDynamicLinkData(context, data) : null);
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData? data) async {
-      if (data != null) _parseDynamicLinkData(context, data);
+      if (data != null) parseDynamicLinkData(context, data);
     }, onError: (OnLinkErrorException e) async {
       print(e.message);
       UIHelper.showToast(msg: e.message);
     });
   }
 
-  static _parseDynamicLinkData(
+  static parseDynamicLinkData(
       BuildContext context, PendingDynamicLinkData data) async {
     final Uri? deepLink = data.link;
     final Map<String, dynamic> query = {};
@@ -48,11 +48,43 @@ class DynamicLinks {
         IdentityService identityService = sl<IdentityService>();
         await identityService.setParentId(query2['parent_id']);
         await identityService.setUserId(query2['child_id']);
+        await identityService.setPoolAccountId(query2['pool_account_id']);
         await identityService.refreshUser();
         UIHelper.showToast(msg: 'Log In Success');
         await Navigator.of(context).pushNamed(Routes.homepageChild);
         return;
       }
+    }
+  }
+
+  static parseDynamicLinkData2(BuildContext context, Uri deepLink) async {
+    final Map<String, dynamic> query = {};
+    final Map<String, dynamic> query2 = {};
+
+    deepLink.queryParameters.forEach((k, v) {
+      query[k] = v;
+    });
+    Uri.parse(query['continueUrl']).queryParameters.forEach((k, v) {
+      query2[k] = v;
+    });
+
+    if (query.length > 0 && query2.length > 0) {
+      AuthenticationService authenticationService = sl<AuthenticationService>();
+      AppResponse<bool> response =
+          await authenticationService.loginUsingOOBCode(query['oobCode']);
+      if (!response.isSuccess()) {
+        debugPrint(response.error);
+        UIHelper.showToast(msg: response.error);
+        return;
+      }
+      IdentityService identityService = sl<IdentityService>();
+      await identityService.setParentId(query2['parent_id']);
+      await identityService.setUserId(query2['child_id']);
+      await identityService.setPoolAccountId(query2['pool_account_id']);
+      await identityService.refreshUser();
+      UIHelper.showToast(msg: 'Log In Success');
+      await Navigator.of(context).pushNamed(Routes.homepageChild);
+      return;
     }
   }
 }

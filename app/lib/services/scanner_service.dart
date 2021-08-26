@@ -34,7 +34,7 @@ class ScannerService {
         name: identityService.getName(),
         id: identityService.getUID(),
         parentId: identityService.getParentId()!,
-        email: identityService.getEmail()!,
+        accountId: identityService.getPoolAccountId()!,
       );
       return AppResponse(data: jsonEncode(userObject.toJson()));
     } catch (e) {

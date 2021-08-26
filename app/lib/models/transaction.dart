@@ -59,8 +59,8 @@ class Transaction {
 
   Map<String, dynamic> toFusionAPIJson() => {
         "amount": amount,
-        "sender": sender.email,
-        "receiver": receiver.email,
+        "sender": sender.accountId,
+        "receiver": receiver.accountId,
       };
 }
 
@@ -69,38 +69,38 @@ class UserObject {
     required this.name,
     required this.id,
     required this.parentId,
-    required this.email,
+    required this.accountId,
   });
 
   final String name;
   final String id;
   final String parentId;
-  final String email;
+  final String accountId;
 
   UserObject copyWith({
     String? name,
     String? id,
     String? parentId,
-    String? email,
+    String? accountId,
   }) =>
       UserObject(
         name: name ?? this.name,
         id: id ?? this.id,
         parentId: parentId ?? this.parentId,
-        email: email ?? this.email,
+        accountId: accountId ?? this.accountId,
       );
 
   factory UserObject.fromJson(Map<String, dynamic> json) => UserObject(
         name: json["name"],
         id: json["id"],
         parentId: json["parent_id"],
-        email: json["email"],
+        accountId: json["account_id"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "id": id,
         "parent_id": parentId,
-        "email": email,
+        "account_id": accountId,
       };
 }

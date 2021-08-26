@@ -65,6 +65,7 @@ class ChildrenController with ChangeNotifier {
         paymentPermissionRequired: _permissionRequired,
         parentId: identityService.getUID(),
         balance: 0,
+        poolAccountID: identityService.getPoolAccountId(),
       );
     }
     child = child.copyWith(
@@ -72,6 +73,7 @@ class ChildrenController with ChangeNotifier {
       username: usernameController.text,
       email: emailController.text,
       paymentPermissionRequired: _permissionRequired,
+      poolAccountID: identityService.getPoolAccountId(),
     );
     AppResponse<Child> fusionResponse =
         await cloudFunctionsService.signUpChild(child);

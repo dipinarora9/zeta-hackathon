@@ -29,13 +29,13 @@ class Parent extends CustomUser {
           dob: dob,
         );
 
-  final int accountNumber;
+  final String accountNumber;
   final int mobile;
   final int? latestRenewalDate;
   final List<String> childrenIds;
 
   Parent copyWith({
-    int? accountNumber,
+    String? accountNumber,
     List<String>? childrenIds,
     int? mobile,
     String? userId,

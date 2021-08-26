@@ -37,7 +37,7 @@ class SignUpController with ChangeNotifier {
       return;
     }
     Parent parent = Parent(
-      accountNumber: 0,
+      accountNumber: '',
       childrenIds: [],
       mobile: int.parse(mobileController.text),
       userId: signUpResponse.data!,
@@ -48,7 +48,7 @@ class SignUpController with ChangeNotifier {
       email: emailController.text,
       dob: _dob,
     );
-    debugPrint('HERE IS IT GOT HERE');
+
     AppResponse<Parent> fusionResponse =
         await cloudFunctionsService.signUpParent(parent);
     if (!fusionResponse.isSuccess()) {

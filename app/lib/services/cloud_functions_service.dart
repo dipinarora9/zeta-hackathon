@@ -4,6 +4,9 @@ import 'package:zeta_hackathon/helpers/app_response.dart';
 import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
 import 'package:zeta_hackathon/models/user/parent.dart';
+import 'package:zeta_hackathon/services/identitiy_service.dart';
+
+import '../dependency_injector.dart';
 
 class CloudFunctionsService {
   final FirebaseFunctions functions = FirebaseFunctions.instance;
@@ -15,8 +18,17 @@ class CloudFunctionsService {
       final results = await callable(parent.toFusionAPIJson());
       print("HERE IS IT");
       print(results.data.toString());
-      //todo: add account number
-      return AppResponse(data: parent.copyWith(accountNumber: 123));
+      if (results.data['status'].toString().toLowerCase() == 'fail')
+        throw Exception(results.data['message']);
+      IdentityService identityService = sl<IdentityService>();
+      identityService.setAccountHolderId(results.data['accountHolderID']);
+      identityService.setAccountId(results.data['accountID']);
+      identityService.setPoolAccountId(results.data['poolAccountID']);
+      identityService.setResourceId(results.data['resourceID']);
+      return AppResponse(
+          data: parent.copyWith(
+        accountNumber: results.data['accountID'],
+      ));
     } on FirebaseException catch (e) {
       print('HERE IS IT error ${e.message}');
       return AppResponse(error: e.message);
@@ -29,9 +41,12 @@ class CloudFunctionsService {
   Future<AppResponse<Child>> signUpChild(Child child) async {
     try {
       HttpsCallable callable = functions.httpsCallable('ChildSignUp');
-
-      final results = await callable(child.toFusionAPIJson());
+      IdentityService identityService = sl<IdentityService>();
+      final results = await callable(
+          child.toFusionAPIJson(identityService.getPoolAccountId()!));
       print(results.data);
+      if (results.data['status'].toString().toLowerCase() == 'fail')
+        throw Exception(results.data['message']);
       return AppResponse(data: child);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
