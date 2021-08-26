@@ -23,25 +23,25 @@ class ChildHomepageScreen extends StatelessWidget {
       ),
       actions: [
         IconButton(
-          onPressed: () => childHomepageController.generateQR(context),
+          onPressed: () async {
+            await childHomepageController.generateQR(context);
+            await childHomepageController.fetchChildDetails();
+          },
           icon: Icon(Icons.code),
         )
       ],
-      body: SingleChildScrollView(
-        child: RefreshIndicator(
-          key: refreshKey,
-          onRefresh: () async => childHomepageController.fetchChildDetails(),
-          child: Column(
-            children: [
-              if (childHomepageController.child != null)
-                BalanceWidget(child: childHomepageController.child!),
-              AnalyticsWidget(),
-            ],
-          ),
-        ),
+      body: Column(
+        children: [
+          if (childHomepageController.child != null)
+            BalanceWidget(child: childHomepageController.child!),
+          AnalyticsWidget(),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => childHomepageController.scanQR(context),
+        onPressed: () async {
+          await childHomepageController.scanQR(context);
+          await childHomepageController.fetchChildDetails();
+        },
         label: Text('Scan QR'),
       ),
     );
