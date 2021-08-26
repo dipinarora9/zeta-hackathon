@@ -8,6 +8,7 @@ const fetch = require("node-fetch");
 const fusion_obj = {
     BASE_URL: 'https://fusion.preprod.zeta.in',
     IFIID: '140793',
+    ACCOUNT_PRODUCT_ID: 'c1157a6e-472a-40a1-8be2-b2b1b3f86955',
     BUNDLEID: 'd0f32812-d701-4650-945d-f8d8280d621b',
     FUNDACCOUNTID: 'b46779a5-d42d-41b7-ab47-e241c7274a18',
     AUTH_KEY: 'eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwidGFnIjoiRXNzLU1QWDFKX3Y3VnI4clNTQ0ZEZyIsImFsZyI6IkExMjhHQ01LVyIsIml2IjoicGI3S3Uya2hSbnBJS1hNLSJ9.Af5ZwXx1nAn-Ur2B4Mtixtq9Er1-q8xyqEttJhdpkic.MPvC3iFhy3inzjk5XN7Ksg.QZo4s_G-3JooPrjw3Of95q2AhBzztKBhQoSMPRqXInujrTpYEsI4D0KSvr_mDRhrv6enxcgLO4FerpaPHykBGRM3_nPVIfYqDU7pVV8Lx0w4ZSr4iPx1V7L30x5nXBwC5_P44ERBJfK__0aUEX5EnPil07z8xROmu7sUeGgpcSUPnowIBGeQR0gZKA2HIktYUVaHQwAI3ALIBRJsLYCmKjxeZlxye4PTxTiNSBg70XAo4Mi8tNsfxfLIhHll5ExuZX4BxfdkUVblKPbSVXGs3Fbi49AdNxhOaC8QTLCaXy48Kzz9UxB8yjtw1q6-IXYt1plRDJaqWGCaEaacW_RZmHHvZQgYJVL5WT92sBftsHZWuKVv1vu5XmF539H2UvNf.SzLl7CbL7_uhdy6mNz4xjw',
@@ -97,7 +98,7 @@ function getCurrentServerTime() {
     });
 });*/
 
-function createNewIndividual(data) {
+async function createNewIndividual(data) {
     let res = await new Promise(async (resolve, reject) => {
         try {
             let response = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/applications/newIndividual`, {
@@ -125,8 +126,8 @@ function createNewIndividual(data) {
     return res;
 }
 
-function issueBundle(bundleName, accountHolderID, email) {
-    let res = await new Promise((resolve, reject) => {
+async function issueBundle(bundleName, accountHolderID, email) {
+    let res = await new Promise(async (resolve, reject) => {
         try {
             let formData = {
                 "accountHolderID": accountHolderID,
@@ -148,6 +149,7 @@ function issueBundle(bundleName, accountHolderID, email) {
                 resolve({
                     'status': 'SUCCESS',
                     'accountID': response.accounts[0].accountID,
+                    'accountHolderID': response.accounts[0].accountHolderID,
                     'resourceID': response.paymentInstruments[0].resourceID,
                 });
             }
@@ -164,24 +166,50 @@ exports.ParentSignUp = functions.https.onRequest(async (request, response) => {
     // create acc holder
     // issue bundle -> name: parent account
     // pool account create
-    let res = new Promise((resolve, reject) => {
+    let res = new Promise(async (resolve, reject) => {
         try {
             let params = request.body;
             params.ifiID = fusion_obj.IFIID;
             params.individualType = 'REAL';
             params.applicationType = "CREATE_ACCOUNT_HOLDER";
             // params.source = 'postman';
-            let data = createNewIndividual(params);
+            let data = await createNewIndividual(params);
             if (data.status === 'FAIL') {
                 reject({ 'status': 'FAIL' });
             } else {
                 // issue bundle -> bundle name, id, email
-                let accountPaymentProducts = issueBundle('parent account', data.individualID, data.vectors.value);
+                let accountPaymentProducts = await issueBundle('parent account', data.individualID, data.vectors.value);
+                // account id, accountHolderID , resource id
+                let formData = {
+                    "accountHolderID": accountPaymentProducts.accountHolderID,
+                    "accountProductID": fusion_obj.ACCOUNT_PRODUCT_ID,
+                    "name": "Pool Account"
+                }
+                let response = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/bundles/${fusion_obj.BUNDLEID}/issueAccount`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Zeta-AuthToken': fusion_obj.AUTH_KEY
+                    },
+                    body: formData,
+                });
+                if (response.status !== 200) {
+                    reject({ 'status': 'FAIL' });
+                } else {
+                    resolve({
+                        'status': 'SUCCESS',
+                        'accountHolderID': response.accountHolderID
+                    });
+                }
             }
         } catch (err) {
-            reject();
+            reject({
+                'status': 'FAIL',
+                'message': err.message
+            });
         }
     })
+    response.send(res);
+    // return res;
 });
 
 exports.ChildSignUp = functions.https.onRequest(async (request, response) => {
@@ -189,6 +217,19 @@ exports.ChildSignUp = functions.https.onRequest(async (request, response) => {
     // issue bundle -> name: child account
     // map paymentProduct to parents pool account
     // 
+
+    let paymentResourceID = "";
+    let targetAccountID = "";
+    let mapResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/resources/${paymentResourceID}/target`, {
+        method: 'PATCH',
+        headers: {
+            'X-Zeta-AuthToken': fusion_obj.AUTH_KEY,
+            'Content-Type': 'application/json'
+        },
+        body: {
+            "target": `account://${targetAccountID}`,
+        },
+    });
 });
 
 function getAccountIDViaAccountHolderID(accountHolderID) {
@@ -207,7 +248,7 @@ function getAccountIDViaAccountHolderID(accountHolderID) {
     });
 }
 
-function getAccountIDsViaEmail(email) {
+async function getAccountIDsViaEmail(email) {
     let res = await new Promise(async (resolve, reject) => {
         try {
             let accountHolderIDResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/individualByVector/e/${email}`, {
