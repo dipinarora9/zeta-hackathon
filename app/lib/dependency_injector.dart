@@ -7,6 +7,7 @@ import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/services/analytics_service.dart';
 import 'package:zeta_hackathon/services/authentication_service.dart';
 import 'package:zeta_hackathon/services/cache_service.dart';
+import 'package:zeta_hackathon/services/cloud_functions_service.dart';
 import 'package:zeta_hackathon/services/database_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 import 'package:zeta_hackathon/services/notification_service.dart';
@@ -45,6 +46,7 @@ Future<void> init() async {
       sl<AuthenticationService>(),
       sl<DatabaseService>(),
       sl<IdentityService>(),
+      sl<CloudFunctionsService>(),
     )..initialize(),
   );
   sl.registerFactory<PocketMoneyPlanController>(() => PocketMoneyPlanController(
@@ -56,10 +58,12 @@ Future<void> init() async {
             p1,
             sl<TransactionService>(),
             sl<IdentityService>(),
+            sl<CloudFunctionsService>(),
           ));
   sl.registerFactory<SignUpController>(() => SignUpController(
         sl<AuthenticationService>(),
         sl<DatabaseService>(),
+        sl<CloudFunctionsService>(),
       ));
 
   ///Services
@@ -71,6 +75,8 @@ Future<void> init() async {
   sl.registerSingleton<CacheService<String>>(
       CacheService<String>()..initialize());
   sl.registerLazySingleton<ScannerService>(() => ScannerService());
+  sl.registerLazySingleton<CloudFunctionsService>(
+      () => CloudFunctionsService());
   sl.registerLazySingleton<IdentityService>(
       () => IdentityService(sl<CacheService<String>>()));
   sl.registerLazySingleton<NotificationService>(

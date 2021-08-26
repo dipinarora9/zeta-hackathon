@@ -31,9 +31,10 @@ class ScannerService {
 
       IdentityService identityService = sl<IdentityService>();
       UserObject userObject = UserObject(
-        name: 'No name',
+        name: identityService.getName(),
         id: identityService.getUID(),
         parentId: identityService.getParentId()!,
+        email: identityService.getEmail()!,
       );
       return AppResponse(data: jsonEncode(userObject.toJson()));
     } catch (e) {

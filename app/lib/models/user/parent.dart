@@ -18,6 +18,7 @@ class Parent extends CustomUser {
     required isParent,
     required username,
     required email,
+    required dob,
   }) : super(
           userId: userId,
           createdDate: createdDate,
@@ -25,6 +26,7 @@ class Parent extends CustomUser {
           isParent: isParent,
           username: username,
           email: email,
+          dob: dob,
         );
 
   final int accountNumber;
@@ -43,6 +45,7 @@ class Parent extends CustomUser {
     bool? isParent,
     String? email,
     int? latestRenewalDate,
+    DateTime? dob,
   }) =>
       Parent(
         accountNumber: accountNumber ?? this.accountNumber,
@@ -55,6 +58,7 @@ class Parent extends CustomUser {
         username: username ?? this.username,
         email: email ?? this.email,
         latestRenewalDate: latestRenewalDate ?? this.latestRenewalDate,
+        dob: dob ?? this.dob,
       );
 
   factory Parent.fromJson(Map<String, dynamic> json) => Parent(
@@ -65,6 +69,7 @@ class Parent extends CustomUser {
             : List<String>.from(json["children_ids"].map((x) => x)),
         mobile: json["mobile"] == null ? null : json["mobile"],
         userId: json["user_id"] == null ? null : json["user_id"],
+        dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
         createdDate: json["created_date"] == null ? null : json["created_date"],
         aadhaarNumber:
             json["aadhaar_number"] == null ? null : json["aadhaar_number"],
@@ -87,5 +92,21 @@ class Parent extends CustomUser {
         "username": username,
         "email": email,
         "latest_renewal_date": latestRenewalDate,
+        "dob": dob.toIso8601String(),
+      };
+
+  Map<String, dynamic> toFusionAPIJson() => {
+        "firstName": username,
+        "dob": {"year": dob.year, "month": dob.month, "day": dob.day},
+        "kycDetails": {
+          "kycStatus": "MINIMAL",
+          "kycStatusPostExpiry": "string",
+          "kycAttributes": {},
+          "authData": {"AADHAR": aadhaarNumber},
+          "authType": "AADHAR"
+        },
+        "vectors": [
+          {"type": "e", "value": email, "isVerified": false}
+        ],
       };
 }

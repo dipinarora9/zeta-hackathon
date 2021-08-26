@@ -2,6 +2,7 @@
     package="com.example.zeta_hackathon">
    <application
         android:label="Zeta Hackathon"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -49,9 +49,10 @@ class SignUpScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                keyboardType: TextInputType.number,
-                controller: signupController.accountController,
-                decoration: InputDecoration(labelText: 'Account Number'),
+                onChanged: (s) {
+                  if (s.contains('-')) {}
+                },
+                decoration: InputDecoration(labelText: 'Username'),
               ),
             ),
             Padding(

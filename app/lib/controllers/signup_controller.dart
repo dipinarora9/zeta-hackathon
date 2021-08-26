@@ -4,25 +4,29 @@ import 'package:zeta_hackathon/helpers/app_response.dart';
 import 'package:zeta_hackathon/helpers/ui_helper.dart';
 import 'package:zeta_hackathon/models/user/parent.dart';
 import 'package:zeta_hackathon/services/authentication_service.dart';
+import 'package:zeta_hackathon/services/cloud_functions_service.dart';
 import 'package:zeta_hackathon/services/database_service.dart';
 
 class SignUpController with ChangeNotifier {
   final AuthenticationService authenticationService;
   final DatabaseService databaseService;
+  final CloudFunctionsService cloudFunctionsService;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final TextEditingController aadhaarController;
   final TextEditingController usernameController;
-  final TextEditingController accountController;
-  final TextEditingController mobileController;
 
-  SignUpController(this.authenticationService, this.databaseService)
+  final TextEditingController mobileController;
+  final DateTime dob;
+
+  SignUpController(this.authenticationService, this.databaseService,
+      this.cloudFunctionsService)
       : emailController = TextEditingController(),
         passwordController = TextEditingController(),
         aadhaarController = TextEditingController(),
         usernameController = TextEditingController(),
-        accountController = TextEditingController(),
-        mobileController = TextEditingController();
+        mobileController = TextEditingController(),
+        dob = DateTime(1970, 4, 1);
 
   signUp() async {
     AppResponse<String> signUpResponse = await authenticationService.signUp(
@@ -32,16 +36,25 @@ class SignUpController with ChangeNotifier {
       return;
     }
     Parent parent = Parent(
-        accountNumber: int.parse(accountController.text),
-        childrenIds: [],
-        mobile: int.parse(mobileController.text),
-        userId: signUpResponse.data!,
-        createdDate: DateTime.now().toUtc().millisecondsSinceEpoch,
-        aadhaarNumber: int.parse(aadhaarController.text),
-        isParent: true,
-        username: usernameController.text,
-        email: emailController.text);
+      accountNumber: 0,
+      childrenIds: [],
+      mobile: int.parse(mobileController.text),
+      userId: signUpResponse.data!,
+      createdDate: DateTime.now().toUtc().millisecondsSinceEpoch,
+      aadhaarNumber: int.parse(aadhaarController.text),
+      isParent: true,
+      username: usernameController.text,
+      email: emailController.text,
+      dob: dob,
+    );
 
+    AppResponse<Parent> fusionResponse =
+        await cloudFunctionsService.signUpParent(parent);
+    if (!fusionResponse.isSuccess()) {
+      UIHelper.showToast(msg: fusionResponse.error);
+      return;
+    }
+    parent = fusionResponse.data!;
     AppResponse<bool> databaseResponse =
         await databaseService.saveParentDetails(parent);
     if (databaseResponse.isSuccess())

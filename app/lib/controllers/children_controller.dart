@@ -4,6 +4,7 @@ import 'package:zeta_hackathon/helpers/ui_helper.dart';
 import 'package:zeta_hackathon/models/pocket_money.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
 import 'package:zeta_hackathon/services/authentication_service.dart';
+import 'package:zeta_hackathon/services/cloud_functions_service.dart';
 import 'package:zeta_hackathon/services/database_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 
@@ -11,6 +12,7 @@ class ChildrenController with ChangeNotifier {
   Child child;
   final DatabaseService databaseService;
   final IdentityService identityService;
+  final CloudFunctionsService cloudFunctionsService;
   final AuthenticationService authenticationService;
   final TextEditingController emailController;
   final TextEditingController usernameController;
@@ -20,7 +22,7 @@ class ChildrenController with ChangeNotifier {
   Map<String, PocketMoney> _plans;
 
   ChildrenController(this.child, this.authenticationService,
-      this.databaseService, this.identityService)
+      this.databaseService, this.identityService, this.cloudFunctionsService)
       : emailController = TextEditingController(text: child.email),
         aadhaarController =
             TextEditingController(text: child.aadhaarNumber.toString()),
@@ -72,6 +74,13 @@ class ChildrenController with ChangeNotifier {
       email: emailController.text,
       paymentPermissionRequired: _permissionRequired,
     );
+    AppResponse<Child> fusionResponse =
+        await cloudFunctionsService.signUpChild(child);
+    if (!fusionResponse.isSuccess()) {
+      UIHelper.showToast(msg: fusionResponse.error);
+      return;
+    }
+    child = fusionResponse.data!;
     AppResponse<String> response = await databaseService.addChildDetails(child);
     if (response.isSuccess()) {
       child = child.copyWith(userId: response.data);

@@ -11,7 +11,7 @@ class TransactionService {
 
   TransactionService(this.databaseService, this.identityService);
 
-  Future<AppResponse<bool>> createTransaction(
+  Future<AppResponse<Transaction>> createTransaction(
       double amount, UserObject receiver) async {
     try {
       //fetch senderChild
@@ -44,7 +44,7 @@ class TransactionService {
             await databaseService.updateBalance(receiverChild, amount);
         if (!receiverResponse.isSuccess())
           throw Exception(receiverResponse.error);
-        return AppResponse(data: true);
+        return AppResponse(data: transaction);
       } else {
         throw Exception("Insufficient Balance");
       }

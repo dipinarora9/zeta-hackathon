@@ -22,6 +22,12 @@ class IdentityService {
     return FirebaseAuth.instance.currentUser?.photoURL ?? '';
   }
 
+  String? getEmail() {
+    // AppResponse<String?> response = cacheService.getData('parentId');
+    // return response.data;
+    return FirebaseAuth.instance.currentUser?.email ?? '';
+  }
+
   Future<void> setParentId(String id) async {
     // AppResponse<bool> response = await cacheService.putData('parentId', id);
     // if (!response.isSuccess()) {

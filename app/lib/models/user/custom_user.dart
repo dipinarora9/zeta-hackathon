@@ -6,6 +6,7 @@ abstract class CustomUser {
     required this.aadhaarNumber,
     required this.isParent,
     required this.email,
+    required this.dob,
   });
 
   final String userId;
@@ -14,4 +15,5 @@ abstract class CustomUser {
   final int createdDate;
   final int aadhaarNumber;
   final bool isParent;
+  final DateTime dob;
 }

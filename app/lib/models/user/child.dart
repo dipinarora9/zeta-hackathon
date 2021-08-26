@@ -19,6 +19,7 @@ class Child extends CustomUser {
     required isParent,
     required username,
     required email,
+    required dob,
   }) : super(
           userId: userId,
           createdDate: createdDate,
@@ -26,6 +27,7 @@ class Child extends CustomUser {
           isParent: isParent,
           username: username,
           email: email,
+          dob: dob,
         );
 
   Child.empty()
@@ -40,6 +42,7 @@ class Child extends CustomUser {
           isParent: false,
           username: '',
           email: '',
+          dob: DateTime(1970, 4, 1),
         );
   final String parentId;
   final bool paymentPermissionRequired;
@@ -57,6 +60,7 @@ class Child extends CustomUser {
     String? username,
     bool? isParent,
     String? email,
+    DateTime? dob,
   }) =>
       Child(
         parentId: parentId ?? this.parentId,
@@ -70,6 +74,7 @@ class Child extends CustomUser {
         isParent: isParent ?? this.isParent,
         username: username ?? this.username,
         email: email ?? this.email,
+        dob: dob ?? this.dob,
       );
 
   factory Child.fromJson(Map<String, dynamic> json) => Child(
@@ -88,6 +93,7 @@ class Child extends CustomUser {
         isParent: json["is_parent"] == null ? null : json["is_parent"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
+        dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -102,12 +108,32 @@ class Child extends CustomUser {
         "is_parent": isParent,
         "username": username,
         "email": email,
+        "dob": dob.toIso8601String(),
+      };
+
+  Map<String, dynamic> toFusionAPIJson() => {
+        "firstName": username,
+        "dob": {"year": dob.year, "month": dob.month, "day": dob.day},
+        "kycDetails": {
+          "kycStatus": "MINIMAL",
+          "kycStatusPostExpiry": "string",
+          "kycAttributes": {},
+          "authData": {"AADHAR": aadhaarNumber},
+          "authType": "AADHAR"
+        },
+        "vectors": [
+          {"type": "e", "value": email, "isVerified": false}
+        ],
       };
 
   bool isEmpty() => userId == '';
 
-  UserObject toUserObject() =>
-      UserObject(name: username, id: userId, parentId: parentId);
+  UserObject toUserObject() => UserObject(
+        name: username,
+        id: userId,
+        parentId: parentId,
+        email: email,
+      );
 }
 
 PocketMoneyDetails pocketMoneyDetailsFromJson(String str) =>
