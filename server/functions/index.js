@@ -348,7 +348,7 @@ exports.A2ATransaction = functions.https.onCall(async (data, context) => {
         }
     });
     // response.send(res);
-    // return res;
+    return res;
 });
 
 // exports.checkBalance = functions.https.onRequest(async (request, response) => {

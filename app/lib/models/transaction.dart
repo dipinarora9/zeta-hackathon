@@ -59,8 +59,8 @@ class Transaction {
 
   Map<String, dynamic> toFusionAPIJson() => {
         "amount": amount,
-        "sender": sender.accountId,
-        "receiver": receiver.accountId,
+        "debitAccountID": sender.accountId,
+        "creditAccountID": receiver.accountId,
       };
 }
 
