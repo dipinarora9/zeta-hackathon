@@ -72,8 +72,7 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthenticationService>(
       () => AuthenticationService());
   sl.registerLazySingleton<DatabaseService>(() => DatabaseService());
-  sl.registerSingleton<CacheService<String>>(
-      CacheService<String>()..initialize());
+  sl.registerSingleton<CacheService<String>>(CacheService<String>());
   sl.registerLazySingleton<ScannerService>(() => ScannerService());
   sl.registerLazySingleton<CloudFunctionsService>(
       () => CloudFunctionsService());

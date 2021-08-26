@@ -48,7 +48,15 @@ class Routes {
   };
 
   static Route<dynamic>? generateRoutes(RouteSettings routeSettings) {
+    // if (!di<IdentityService>().isServiceReady())
+    //   return MaterialPageRoute(
+    //     builder: (_) => Scaffold(
+    //       body: Center(child: CircularProgressIndicator()),
+    //     ),
+    //   );
+
     String uid = di<IdentityService>().getUID();
+    print('HERE IS IT called from here');
     String? parentId = di<IdentityService>().getParentId();
     if (routeSettings.name == Routes.initialScreen &&
         uid != '' &&

@@ -20,6 +20,7 @@ class SignUpScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: signupController.emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(labelText: 'Email'),
               ),
             ),
@@ -50,9 +51,17 @@ class SignUpScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 onChanged: (s) {
-                  if (s.contains('-')) {}
+                  List<String> d = s.split('-');
+                  if (d.length == 3) {
+                    int? year = int.tryParse(d.last);
+                    int? month = int.tryParse(d[1]);
+                    int? date = int.tryParse(d.first);
+                    if (year != null && month != null && date != null)
+                      signupController.setDate(DateTime(year, month, date));
+                  }
                 },
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: InputDecoration(
+                    labelText: 'Date of Birth', hintText: '01-01-2000'),
               ),
             ),
             Padding(

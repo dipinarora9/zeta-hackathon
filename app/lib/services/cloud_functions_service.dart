@@ -10,7 +10,7 @@ class CloudFunctionsService {
 
   Future<AppResponse<Parent>> signUpParent(Parent parent) async {
     try {
-      HttpsCallable callable = functions.httpsCallable('listFruit');
+      HttpsCallable callable = functions.httpsCallable('ParentSignUp');
 
       final results = await callable(parent.toFusionAPIJson());
       print(results.data);
@@ -25,7 +25,7 @@ class CloudFunctionsService {
 
   Future<AppResponse<Child>> signUpChild(Child child) async {
     try {
-      HttpsCallable callable = functions.httpsCallable('listFruit');
+      HttpsCallable callable = functions.httpsCallable('ChildSignUp');
 
       final results = await callable(child.toFusionAPIJson());
       print(results.data);
@@ -39,7 +39,7 @@ class CloudFunctionsService {
 
   Future<AppResponse<double>> checkBalance(String accountID) async {
     try {
-      HttpsCallable callable = functions.httpsCallable('listFruit');
+      HttpsCallable callable = functions.httpsCallable('checkBalance');
 
       final results = await callable(accountID);
       print(results.data);
@@ -54,9 +54,24 @@ class CloudFunctionsService {
 
   Future<AppResponse<bool>> doTransaction(Transaction transaction) async {
     try {
-      HttpsCallable callable = functions.httpsCallable('listFruit');
+      HttpsCallable callable = functions.httpsCallable('A2ATransaction');
 
       final results = await callable(transaction.toFusionAPIJson());
+      print(results.data);
+      //todo: add response
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
+
+  Future<AppResponse<bool>> getAccountDetails(String individualID) async {
+    try {
+      HttpsCallable callable = functions.httpsCallable('getAccountDetails');
+
+      final results = await callable(individualID);
       print(results.data);
       //todo: add response
       return AppResponse(data: true);

@@ -17,7 +17,7 @@ class SignUpController with ChangeNotifier {
   final TextEditingController usernameController;
 
   final TextEditingController mobileController;
-  final DateTime dob;
+  DateTime _dob;
 
   SignUpController(this.authenticationService, this.databaseService,
       this.cloudFunctionsService)
@@ -26,12 +26,13 @@ class SignUpController with ChangeNotifier {
         aadhaarController = TextEditingController(),
         usernameController = TextEditingController(),
         mobileController = TextEditingController(),
-        dob = DateTime(1970, 4, 1);
+        _dob = DateTime(1970, 4, 1);
 
   signUp() async {
     AppResponse<String> signUpResponse = await authenticationService.signUp(
         emailController.text, passwordController.text);
     if (!signUpResponse.isSuccess()) {
+      debugPrint('HERE IS IT error ${signUpResponse.error}');
       UIHelper.showToast(msg: signUpResponse.error);
       return;
     }
@@ -45,7 +46,7 @@ class SignUpController with ChangeNotifier {
       isParent: true,
       username: usernameController.text,
       email: emailController.text,
-      dob: dob,
+      dob: _dob,
     );
 
     AppResponse<Parent> fusionResponse =
@@ -59,7 +60,13 @@ class SignUpController with ChangeNotifier {
         await databaseService.saveParentDetails(parent);
     if (databaseResponse.isSuccess())
       UIHelper.showToast(msg: 'Sign Up Success');
-    else
+    else {
+      debugPrint('HERE IS IT error ${databaseResponse.error}');
       UIHelper.showToast(msg: databaseResponse.error);
+    }
+  }
+
+  setDate(DateTime date) {
+    _dob = date;
   }
 }

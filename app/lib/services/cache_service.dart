@@ -3,15 +3,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:zeta_hackathon/helpers/app_response.dart';
 
 class CacheService<T> {
-  late final Box<T> _box;
+  late Box<T> _box;
 
-  // late final SharedPreferences _preferences;
-
-  initialize() async {
-    // _preferences = await SharedPreferences.getInstance();
+  Future<bool> initialize() async {
+    print('HERE IS IT initializing');
     final document = await getApplicationDocumentsDirectory();
     Hive.init(document.path);
     _box = await Hive.openBox('box');
+    print('HERE IS IT initialized');
+    return true;
   }
 
   AppResponse<T?> getData(String key) {
@@ -44,47 +44,3 @@ class CacheService<T> {
     }
   }
 }
-
-// class CacheService<T> {
-//   // late final Box<T> _box;
-//
-//   late final SharedPreferences _preferences;
-//
-//   initialize() async {
-//     _preferences = await SharedPreferences.getInstance();
-//     // final document = await getApplicationDocumentsDirectory();
-//     // Hive.init(document.path);
-//     // _box = await Hive.openBox('box');
-//   }
-//
-//   AppResponse<String?> getData(String key) {
-//     try {
-//       // T? result = _box.get(key);
-//       String? result = _preferences.getString(key);
-//       return AppResponse(data: result);
-//     } catch (e) {
-//       return AppResponse(error: e.toString());
-//     }
-//   }
-//
-//   Future<AppResponse<bool>> putData(String key, String value) async {
-//     try {
-//       // await _box.put(key, value);
-//       await _preferences.setString(key, value);
-//       return AppResponse(data: true);
-//     } catch (e) {
-//       print('HERE IS IT e $e');
-//       return AppResponse(error: e.toString());
-//     }
-//   }
-//
-//   Future<AppResponse<bool>> delete(String key) async {
-//     try {
-//       // await _box.delete(key);
-//       await _preferences.remove(key);
-//       return AppResponse(data: true);
-//     } catch (e) {
-//       return AppResponse(error: e.toString());
-//     }
-//   }
-// }
