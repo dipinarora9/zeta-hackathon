@@ -21,8 +21,8 @@ let firebaseApp = firebase.initializeApp({
 
 var db = firebaseApp.firestore();
 async function script() {
-    // const time = getTimestamp(new Date());
-    const time = 1630089000;
+    const time = getTimestamp(new Date());
+    // const time = 1630089000;
     // fetch docs of users(parent) with latest renewal date as today 12AM 
     let users = await db.collection('users').where('latest_renewal_date', '==', time).get();
     console.log(users.size);
@@ -106,7 +106,7 @@ async function doTransaction(creditAccountID, debitAccountID, amount) {
                 "transferTime": getCurrentServerTime(), // time
                 "attributes": {}
             }
-            
+
             let responseTransaction = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/transfers`, {
                 method: 'POST',
                 headers: {
