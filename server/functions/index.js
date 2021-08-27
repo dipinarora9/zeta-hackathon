@@ -63,7 +63,7 @@ async function issueBundle(bundleName, accountHolderID, email) {
                 body: JSON.stringify(formData),
             });
             let issueResponseData = await issueResponse.json();
-
+            console.log(issueResponseData);
             if (issueResponse.status !== 200) {
                 reject({
                     'status': 'FAIL',
@@ -104,16 +104,16 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
             params.individualType = 'REAL';
             params.applicationType = "CREATE_ACCOUNT_HOLDER";
 
-            let data = await createNewIndividual(params);
+            let newIndividualData = await createNewIndividual(params);
 
-            if (data.status === 'FAIL') {
+            if (newIndividualData.status === 'FAIL') {
                 reject({
                     'status': 'FAIL',
                     'message': data.message
                 });
             } else {
                 // issue bundle -> bundle name, id, email
-                let accountPaymentProducts = await issueBundle('parent account', data.individualID, params.vectors[0].value);
+                let accountPaymentProducts = await issueBundle('parent account', newIndividualData.individualID, params.vectors[0].value);
 
                 // account id, accountHolderID , resource id
                 let formData = {
@@ -150,7 +150,7 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
         }
     })
     // response.send(res);
-    return res;
+
 });
 
 // exports.ChildSignUp = functions.https.onRequest(async (request, response) => {
@@ -173,15 +173,15 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
             params.individualType = 'REAL';
             params.applicationType = "CREATE_ACCOUNT_HOLDER";
 
-            let data = await createNewIndividual(params);
+            let newIndividualData = await createNewIndividual(params);
 
-            if (data.status === 'FAIL') {
+            if (newIndividualData.status === 'FAIL') {
                 reject({
                     'status': 'FAIL',
                     "message": data.message
                 });
             } else {
-                let accountPaymentProducts = await issueBundle('parent account', data.individualID, params.vectors[0].value);
+                let accountPaymentProducts = await issueBundle('parent account', newIndividualData.individualID, params.vectors[0].value);
                 console.log(accountPaymentProducts);
                 let paymentResourceID = accountPaymentProducts.resourceID;
 
@@ -196,7 +196,7 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
                     }),
                 });
                 let mapResponseData = await mapResponse.json();
-
+                console.log(mapResponseData);
                 if (mapResponse.status !== 200) {
                     reject({
                         'status': 'FAIL',
@@ -208,6 +208,10 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
             }
 
         } catch (err) {
+            console.log({
+                'status': 'FAIL',
+                'message': err.message
+            });
             reject({
                 'status': 'FAIL',
                 'message': err.message

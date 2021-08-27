@@ -29,6 +29,7 @@ class CloudFunctionsService {
           data: parent.copyWith(
         accountNumber: results.data['accountID'],
         individualId: results.data['accountHolderID'],
+        poolAccountId: results.data['poolAccountID'],
       ));
     } on FirebaseException catch (e) {
       print('HERE IS IT error ${e.message}');
@@ -43,6 +44,7 @@ class CloudFunctionsService {
     try {
       HttpsCallable callable = functions.httpsCallable('ChildSignUp');
       IdentityService identityService = sl<IdentityService>();
+      print(child.pan);
       final results = await callable(
           child.toFusionAPIJson(identityService.getPoolAccountId()!));
       print(results.data);

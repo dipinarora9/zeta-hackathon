@@ -27,6 +27,7 @@ Future<void> init() async {
   sl.registerFactory<LoginController>(() => LoginController(
         sl<AuthenticationService>(),
         sl<IdentityService>(),
+        sl<DatabaseService>(),
       ));
   sl.registerFactory<ChildHomepageController>(() => ChildHomepageController(
         sl<DatabaseService>(),

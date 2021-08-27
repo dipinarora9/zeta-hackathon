@@ -38,6 +38,7 @@ class SignUpController with ChangeNotifier {
     }
     Parent parent = Parent(
       accountNumber: '',
+      poolAccountId: '',
       childrenIds: [],
       individualId: '',
       mobile: int.parse(mobileController.text),

@@ -64,12 +64,12 @@ class DatabaseService {
     }
   }
 
-  Future<AppResponse<Parent>> fetchParentDetails() async {
+  Future<AppResponse<Parent>> fetchParentDetails({String? uid}) async {
     try {
       DocumentSnapshot snapshot = await parentCollection
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .doc(uid ?? FirebaseAuth.instance.currentUser!.uid)
           .get();
-      Parent parent = Parent.fromJson(snapshot.data() as Map<String, dynamic>);
+      Parent parent = snapshot.data() as Parent;
       return AppResponse(data: parent);
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);

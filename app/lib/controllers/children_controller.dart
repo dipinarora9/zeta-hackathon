@@ -84,6 +84,7 @@ class ChildrenController with ChangeNotifier {
       }
       child = fusionResponse.data!;
     }
+    print('HERE IS IT Reached');
     if (_planChanged)
       await databaseService.updateLatestRenewalDateToTomorrow(child.parentId);
     AppResponse<String> response = await databaseService.addChildDetails(child);

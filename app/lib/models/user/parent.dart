@@ -12,6 +12,7 @@ class Parent extends CustomUser {
     required this.childrenIds,
     required this.mobile,
     this.latestRenewalDate,
+    required this.poolAccountId,
     required userId,
     required individualId,
     required createdDate,
@@ -34,6 +35,7 @@ class Parent extends CustomUser {
   final String accountNumber;
   final int mobile;
   final int? latestRenewalDate;
+  final String poolAccountId;
   final List<String> childrenIds;
 
   Parent copyWith({
@@ -49,6 +51,7 @@ class Parent extends CustomUser {
     String? individualId,
     int? latestRenewalDate,
     DateTime? dob,
+    String? poolAccountId,
   }) =>
       Parent(
         accountNumber: accountNumber ?? this.accountNumber,
@@ -63,6 +66,7 @@ class Parent extends CustomUser {
         latestRenewalDate: latestRenewalDate ?? this.latestRenewalDate,
         dob: dob ?? this.dob,
         individualId: individualId ?? this.individualId,
+        poolAccountId: poolAccountId ?? this.poolAccountId,
       );
 
   factory Parent.fromJson(Map<String, dynamic> json) => Parent(
@@ -79,6 +83,8 @@ class Parent extends CustomUser {
         isParent: json["is_parent"] == null ? null : json["is_parent"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
+        poolAccountId:
+            json["pool_account_id"] == null ? null : json["pool_account_id"],
         individualId:
             json["individual_id"] == null ? null : json["individual_id"],
         latestRenewalDate: json["latest_renewal_date"] == null
@@ -98,6 +104,7 @@ class Parent extends CustomUser {
         "email": email,
         "latest_renewal_date": latestRenewalDate,
         "individual_id": individualId,
+        'pool_account_id': poolAccountId,
         "dob": dob.toIso8601String(),
       };
 
