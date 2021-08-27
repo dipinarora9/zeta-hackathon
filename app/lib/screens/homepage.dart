@@ -55,6 +55,11 @@ class HomepageScreen extends StatelessWidget {
               AnalyticsWidget(),
               CustomButton(
                 onPressed: () =>
+                    context.read<ParentHomepageController>().fetchChildren(),
+                text: 'Refresh Children',
+              ),
+              CustomButton(
+                onPressed: () =>
                     Navigator.of(context).pushNamed(Routes.debugScreen),
                 text: 'Show debug screen',
               ),

@@ -33,17 +33,23 @@ class ChildHomepageScreen extends StatelessWidget {
           icon: Icon(Icons.code),
         )
       ],
-      body: Column(
-        children: [
-          if (childHomepageController.child != null)
-            BalanceWidget(child: childHomepageController.child!),
-          CustomButton(
-            onPressed: () =>
-                Navigator.of(context).pushNamed(Routes.debugScreen),
-            text: 'Show debug screen',
-          ),
-          AnalyticsWidget(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            if (childHomepageController.child != null)
+              BalanceWidget(child: childHomepageController.child!),
+            CustomButton(
+              onPressed: () => childHomepageController.fetchChildDetails(),
+              text: 'Refresh Balance',
+            ),
+            CustomButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(Routes.debugScreen),
+              text: 'Show debug screen',
+            ),
+            AnalyticsWidget(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
