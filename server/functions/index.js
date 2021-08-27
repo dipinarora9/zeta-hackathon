@@ -29,7 +29,7 @@ async function createNewIndividual(data) {
                 body: JSON.stringify(data),
             });
             let responseData = await response.json();
-
+            console.log(responseData);
             if (response.status !== 200) {
                 reject({ 'status': 'FAIL', 'message': responseData.message });
             }
@@ -104,48 +104,42 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
             params.individualType = 'REAL';
             params.applicationType = "CREATE_ACCOUNT_HOLDER";
 
-            let newIndividualData = await createNewIndividual(params);
-
-            if (newIndividualData.status === 'FAIL') {
+            let individualData = await createNewIndividual(params);
+            console.log(individualData);
+            if (individualData.status === 'FAIL') {
                 reject({
                     'status': 'FAIL',
-                    'message': data.message
+                    'message': individualData.message
                 });
             } else {
                 // issue bundle -> bundle name, id, email
-                let accountPaymentProducts = await issueBundle('parent account', newIndividualData.individualID, params.vectors[0].value);
-                if (accountPaymentProducts.status === 'FAIL') {
+                let accountPaymentProducts = await issueBundle('parent account', individualData.individualID, params.vectors[0].value);
+                console.log(accountPaymentProducts);
+                // account id, accountHolderID , resource id
+                let formData = {
+                    "accountHolderID": accountPaymentProducts.accountHolderID,
+                    "accountProductID": fusion_obj.ACCOUNT_PRODUCT_ID,
+                    "name": "Pool Account"
+                }
+                let issueAccountResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/bundles/${fusion_obj.BUNDLEID}/issueAccount`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Zeta-AuthToken': fusion_obj.AUTH_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData),
+                });
+                let issueAccountResponseData = await issueAccountResponse.json();
+                console.log(issueAccountResponseData);
+
+                if (issueAccountResponse.status !== 200) {
                     reject({
                         'status': 'FAIL',
-                        'message': data.message
+                        'message': issueAccountResponseData.message
                     });
                 } else {
-                    // account id, accountHolderID , resource id
-                    let formData = {
-                        "accountHolderID": accountPaymentProducts.accountHolderID,
-                        "accountProductID": fusion_obj.ACCOUNT_PRODUCT_ID,
-                        "name": "Pool Account"
-                    }
-                    let issueAccountResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/bundles/${fusion_obj.BUNDLEID}/issueAccount`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Zeta-AuthToken': fusion_obj.AUTH_KEY,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData),
-                    });
-                    let issueAccountResponseData = await issueAccountResponse.json();
-                    console.log(issueAccountResponseData);
-
-                    if (issueAccountResponse.status !== 200) {
-                        reject({
-                            'status': 'FAIL',
-                            'message': issueAccountResponseData.message
-                        });
-                    } else {
-                        accountPaymentProducts.poolAccountID = issueAccountResponseData.accountID;
-                        resolve(accountPaymentProducts);
-                    }
+                    accountPaymentProducts.poolAccountID = issueAccountResponseData.accountID;
+                    resolve(accountPaymentProducts);
                 }
             }
         } catch (err) {
@@ -156,7 +150,7 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
         }
     })
     // response.send(res);
-
+    return res;
 });
 
 // exports.ChildSignUp = functions.https.onRequest(async (request, response) => {
@@ -179,52 +173,41 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
             params.individualType = 'REAL';
             params.applicationType = "CREATE_ACCOUNT_HOLDER";
 
-            let newIndividualData = await createNewIndividual(params);
-
-            if (newIndividualData.status === 'FAIL') {
+            let individualData = await createNewIndividual(params);
+            console.log(individualData);
+            if (individualData.status === 'FAIL') {
                 reject({
                     'status': 'FAIL',
-                    "message": data.message
+                    "message": individualData.message
                 });
             } else {
-                let accountPaymentProducts = await issueBundle('parent account', newIndividualData.individualID, params.vectors[0].value);
+                let accountPaymentProducts = await issueBundle('parent account', individualData.individualID, params.vectors[0].value);
                 console.log(accountPaymentProducts);
-                if (accountPaymentProducts.status === 'FAIL') {
+                let paymentResourceID = accountPaymentProducts.resourceID;
+
+                let mapResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/resources/${paymentResourceID}/target`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-Zeta-AuthToken': fusion_obj.AUTH_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "target": `account://${targetAccountID}`,
+                    }),
+                });
+                let mapResponseData = await mapResponse.json();
+
+                if (mapResponse.status !== 200) {
                     reject({
                         'status': 'FAIL',
-                        'message': data.message
+                        "message": mapResponseData.message,
                     });
                 } else {
-                    let paymentResourceID = accountPaymentProducts.resourceID;
-
-                    let mapResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/resources/${paymentResourceID}/target`, {
-                        method: 'PATCH',
-                        headers: {
-                            'X-Zeta-AuthToken': fusion_obj.AUTH_KEY,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            "target": `account://${targetAccountID}`,
-                        }),
-                    });
-                    let mapResponseData = await mapResponse.json();
-                    console.log(mapResponseData);
-                    if (mapResponse.status !== 200) {
-                        reject({
-                            'status': 'FAIL',
-                            "message": mapResponseData.message,
-                        });
-                    } else {
-                        resolve(accountPaymentProducts);
-                    }
+                    resolve(accountPaymentProducts);
                 }
             }
 
         } catch (err) {
-            console.log({
-                'status': 'FAIL',
-                'message': err.message
-            });
             reject({
                 'status': 'FAIL',
                 'message': err.message
@@ -311,9 +294,9 @@ exports.checkBalance = functions.https.onCall(async (data, conext) => {
     // return res;
 });
 
-// exports.getAccountDetails = functions.https.onRequest(async (request, response) => {
-//     response.send("HEY");
-// })
+exports.getAccountDetails = functions.https.onRequest(async (request, response) => {
+    response.send("HEY");
+})
 
 async function doTransaction(creditAccountID, debitAccountID, amount) {
     return new Promise(async (resolve, reject) => {
