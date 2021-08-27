@@ -15,11 +15,12 @@ class HomepageScreen extends StatelessWidget {
   HomepageScreen({Key? key}) : super(key: key);
   final GlobalKey<RefreshIndicatorState> refreshKey =
       GlobalKey<RefreshIndicatorState>();
+  final IdentityService identityService = sl<IdentityService>();
 
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      title: 'Hi Name',
+      title: 'Hi ${identityService.getName()}',
       showBackButton: false,
       leadingWidget: IconButton(
         onPressed: () =>

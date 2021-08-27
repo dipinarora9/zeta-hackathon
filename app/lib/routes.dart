@@ -14,7 +14,6 @@ import 'controllers/signup_controller.dart';
 import 'controllers/transaction_controller.dart';
 import 'dependency_injector.dart' as sl;
 import 'screens/allow_payment_screen.dart';
-import 'screens/authentication/child_login.dart';
 import 'screens/authentication/parent_login.dart';
 import 'screens/authentication/signup.dart';
 import 'screens/child_homepage.dart';
@@ -124,13 +123,7 @@ class Routes {
               create: (_) => di<LoginController>(),
             ),
           );
-        case Routes.loginChild:
-          return MaterialPageRoute(
-            builder: (BuildContext context) => ChangeNotifierProvider(
-              child: ChildLogin(),
-              create: (_) => di<LoginController>(),
-            ),
-          );
+
         case Routes.pocketMoneyPlans:
           return MaterialPageRoute(
             builder: (BuildContext context) => ChangeNotifierProvider(

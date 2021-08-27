@@ -31,6 +31,29 @@ class DatabaseService {
   Future<AppResponse<bool>> saveParentDetails(Parent parent) async {
     try {
       await parentCollection.doc(parent.userId).set(parent);
+      if (FirebaseAuth.instance.currentUser != null)
+        await FirebaseAuth.instance.currentUser!
+            .updateDisplayName(parent.username);
+      return AppResponse(data: true);
+    } on FirebaseException catch (e) {
+      print("HERE IS IT error ${e.message}");
+      return AppResponse(error: e.message);
+    } catch (e) {
+      print("HERE IS IT error $e");
+      return AppResponse(error: e.toString());
+    }
+  }
+
+  Future<AppResponse<bool>> updateLatestRenewalDateToTomorrow(
+      String parentID) async {
+    try {
+      DateTime d = DateTime.now().toUtc().add(Duration(days: 1));
+      int timestamp =
+          (DateTime(d.year, d.month, d.day).millisecondsSinceEpoch ~/ 1000)
+              .toInt();
+      await parentCollection
+          .doc(parentID)
+          .update({'latest_renewal_date': timestamp});
       return AppResponse(data: true);
     } on FirebaseException catch (e) {
       print("HERE IS IT error ${e.message}");

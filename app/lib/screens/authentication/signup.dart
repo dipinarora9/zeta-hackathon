@@ -34,8 +34,12 @@ class SignUpScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
+              child: TextFormField(
                 controller: signupController.panController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (s) => (s ?? '').length == 10
+                    ? null
+                    : 'PAN should be of 10 characters',
                 decoration: InputDecoration(labelText: 'PAN'),
               ),
             ),

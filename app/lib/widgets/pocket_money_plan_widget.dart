@@ -12,7 +12,7 @@ class PocketMoneyPlanWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: Text(r"$ " + plan.amount.toString()),
+      title: Text(r"Rs. " + plan.amount.toString()),
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.end,

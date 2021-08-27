@@ -72,14 +72,14 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthenticationService>(
       () => AuthenticationService());
   sl.registerLazySingleton<DatabaseService>(() => DatabaseService());
+  sl.registerSingleton<NotificationService>(
+      NotificationService()..initialize());
   sl.registerSingleton<CacheService<String>>(CacheService<String>());
   sl.registerLazySingleton<ScannerService>(() => ScannerService());
   sl.registerLazySingleton<CloudFunctionsService>(
       () => CloudFunctionsService());
   sl.registerLazySingleton<IdentityService>(
       () => IdentityService(sl<CacheService<String>>()));
-  sl.registerLazySingleton<NotificationService>(
-      () => NotificationService()..initialize());
   sl.registerLazySingleton<TransactionService>(
     () => TransactionService(sl<DatabaseService>(), sl<IdentityService>()),
   );

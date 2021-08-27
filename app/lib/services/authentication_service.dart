@@ -25,7 +25,7 @@ class AuthenticationService {
       var auth = FirebaseAuth.instance;
       var emailAuth = email;
       if (auth.isSignInWithEmailLink(emailLink)) {
-        UserCredential userCredential = await auth.signInWithEmailLink(
+        UserCredential _ = await auth.signInWithEmailLink(
             email: emailAuth, emailLink: emailLink);
 
         // You can access the new user via value.user

@@ -190,6 +190,7 @@ async function issueBundle(bundleName, accountHolderID, email) {
     });
 }
 
+
 // exports.ParentSignUp = functions.https.onRequest(async (request, response) => {
 exports.ParentSignUp = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
@@ -254,7 +255,6 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
         }
     })
     // response.send(res);
-    return res;
 });
 
 // exports.ChildSignUp = functions.https.onRequest(async (request, response) => {
@@ -320,6 +320,8 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
     });
     // response.send(res);
 });
+
+
 // exports.A2ATransaction = functions.https.onRequest(async (request, response) => {
 exports.A2ATransaction = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
@@ -348,7 +350,6 @@ exports.A2ATransaction = functions.https.onCall(async (data, context) => {
         }
     });
     // response.send(res);
-    return res;
 });
 
 // exports.checkBalance = functions.https.onRequest(async (request, response) => {
@@ -395,12 +396,7 @@ exports.checkBalance = functions.https.onCall(async (data, conext) => {
     })
 
     // response.send(res);
-    // return res;
 });
-
-exports.getAccountDetails = functions.https.onRequest(async (request, response) => {
-    response.send("HEY");
-})
 
 async function doTransaction(creditAccountID, debitAccountID, amount) {
     return new Promise(async (resolve, reject) => {
@@ -468,46 +464,4 @@ async function doTransaction(creditAccountID, debitAccountID, amount) {
     });
 });*/
 
-// function getAccountIDViaAccountHolderID(accountHolderID) {
-//     return new Promise(async (resolve, reject) => {
-//         let accountIDResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/individuals/${accountHolderID}/accounts`, {
-//             method: 'GET',
-//             headers: {
-//                 'X-Zeta-AuthToken': fusion_obj.AUTH_KEY
-//             },
-//         })
-//         let responseObj = await accountHolderID.json();
-//         if (accountIDResponse.status !== 200) {
-//             reject('');
-//         }
-//         resolve(responseObj.id);
-//     });
-// }
-
-// async function getAccountIDsViaEmail(email) {
-//     let res = await new Promise(async (resolve, reject) => {
-//         try {
-//             let accountHolderIDResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/individualByVector/e/${email}`, {
-//                 method: 'GET',
-//                 headers: {
-//                     'X-Zeta-AuthToken': fusion_obj.AUTH_KEY
-//                 }
-//             });
-//             let status = accountHolderIDResponse.status;
-//             let accountHolderID = await accountHolderIDResponse.json();
-//             if (status !== 200) {
-//                 // error
-//                 reject('');
-//             }
-//             let response = await getAccountIDViaAccountHolderID(accountHolderID);
-//             if (response === '') reject('');
-//             else resolve(response);
-//         } catch (err) {
-//             // error
-//             reject('');
-//         }
-//     });
-//     console.log(res);
-//     return res;
-// }
 

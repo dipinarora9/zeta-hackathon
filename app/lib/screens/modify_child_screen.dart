@@ -27,13 +27,6 @@ class ModifyChildScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                controller: childrenController.panController,
-                decoration: InputDecoration(labelText: 'PAN'),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
                 controller: childrenController.usernameController,
                 decoration: InputDecoration(labelText: 'Username'),
               ),

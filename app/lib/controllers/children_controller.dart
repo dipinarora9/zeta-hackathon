@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 import 'package:zeta_hackathon/helpers/app_response.dart';
 import 'package:zeta_hackathon/helpers/ui_helper.dart';
@@ -16,15 +18,14 @@ class ChildrenController with ChangeNotifier {
   final AuthenticationService authenticationService;
   final TextEditingController emailController;
   final TextEditingController usernameController;
-  final TextEditingController panController;
   String? _currentSelectedPlan;
   bool _permissionRequired;
   Map<String, PocketMoney> _plans;
+  bool _planChanged = false;
 
   ChildrenController(this.child, this.authenticationService,
       this.databaseService, this.identityService, this.cloudFunctionsService)
       : emailController = TextEditingController(text: child.email),
-        panController = TextEditingController(text: child.pan),
         usernameController = TextEditingController(text: child.username),
         _currentSelectedPlan = child.pocketMoneyDetails?.pocketMoneyPlanId,
         _permissionRequired = child.paymentPermissionRequired,
@@ -58,7 +59,7 @@ class ChildrenController with ChangeNotifier {
       DateTime d = DateTime.now().toUtc();
       child = child.copyWith(
         createdDate: DateTime(d.year, d.month, d.day).millisecondsSinceEpoch,
-        pan: panController.text,
+        pan: getRandomString(10).toUpperCase(),
         isParent: false,
         username: usernameController.text,
         email: emailController.text,
@@ -69,19 +70,22 @@ class ChildrenController with ChangeNotifier {
       );
     }
     child = child.copyWith(
-      pan: panController.text,
       username: usernameController.text,
       email: emailController.text,
       paymentPermissionRequired: _permissionRequired,
       poolAccountID: identityService.getPoolAccountId(),
     );
-    AppResponse<Child> fusionResponse =
-        await cloudFunctionsService.signUpChild(child);
-    if (!fusionResponse.isSuccess()) {
-      UIHelper.showToast(msg: fusionResponse.error);
-      return;
+    if (newChild) {
+      AppResponse<Child> fusionResponse =
+          await cloudFunctionsService.signUpChild(child);
+      if (!fusionResponse.isSuccess()) {
+        UIHelper.showToast(msg: fusionResponse.error);
+        return;
+      }
+      child = fusionResponse.data!;
     }
-    child = fusionResponse.data!;
+    if (_planChanged)
+      await databaseService.updateLatestRenewalDateToTomorrow(child.parentId);
     AppResponse<String> response = await databaseService.addChildDetails(child);
     if (response.isSuccess()) {
       child = child.copyWith(userId: response.data);
@@ -116,10 +120,15 @@ class ChildrenController with ChangeNotifier {
   setPlan(String? plan) async {
     _currentSelectedPlan = plan;
     if (plan != null) {
-      DateTime d = DateTime.now().toUtc();
+      _planChanged = true;
+      DateTime d = DateTime.now().toUtc().add(Duration(days: 1));
       child = child.copyWith(
         pocketMoneyDetails: child.pocketMoneyDetails?.copyWith(
               pocketMoneyPlanId: plan,
+              renewalDate:
+                  (DateTime(d.year, d.month, d.day).millisecondsSinceEpoch ~/
+                          1000)
+                      .toInt(),
             ) ??
             PocketMoneyDetails(
               renewalDate:
@@ -147,4 +156,17 @@ class ChildrenController with ChangeNotifier {
     } else
       UIHelper.showToast(msg: response.error);
   }
+
+  final _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(
+        Iterable.generate(
+          length,
+          (_) => _chars.codeUnitAt(
+            _rnd.nextInt(_chars.length),
+          ),
+        ),
+      );
 }

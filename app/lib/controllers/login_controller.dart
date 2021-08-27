@@ -26,8 +26,4 @@ class LoginController with ChangeNotifier {
       UIHelper.showToast(msg: response.error);
     return false;
   }
-
-  loginAsChild() {
-    //set parent id through identity service
-  }
 }

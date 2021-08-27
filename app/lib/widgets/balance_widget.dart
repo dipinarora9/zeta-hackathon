@@ -7,6 +7,8 @@ class BalanceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime d = DateTime.fromMillisecondsSinceEpoch(
+        child.pocketMoneyDetails!.renewalDate * 1000);
     return Column(
       children: [
         Container(height: 30),
@@ -23,7 +25,7 @@ class BalanceWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                '\$ ${child.balance}',
+                'Rs. ${child.balance}',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -43,7 +45,7 @@ class BalanceWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  '${DateTime.fromMillisecondsSinceEpoch(child.pocketMoneyDetails!.renewalDate).toLocal()}',
+                  '${d.day}/${d.month}/${d.year}',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),

@@ -12,9 +12,7 @@ class IdentityService {
     if (response.isSuccess())
       return response.data!;
     else
-      return FirebaseAuth.instance.currentUser?.displayName ??
-          FirebaseAuth.instance.currentUser?.uid ??
-          '';
+      return FirebaseAuth.instance.currentUser?.uid ?? '';
   }
 
   String? getParentId() {
