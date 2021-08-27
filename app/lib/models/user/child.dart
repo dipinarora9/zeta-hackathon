@@ -21,7 +21,6 @@ class Child extends CustomUser {
     required username,
     required email,
     required dob,
-    required individualId,
   }) : super(
           userId: userId,
           createdDate: createdDate,
@@ -30,7 +29,7 @@ class Child extends CustomUser {
           username: username,
           email: email,
           dob: dob,
-          individualId: individualId,
+          individualId: '',
         );
 
   Child.empty()
@@ -84,7 +83,6 @@ class Child extends CustomUser {
         email: email ?? this.email,
         dob: dob ?? this.dob,
         poolAccountID: poolAccountID ?? this.poolAccountID,
-        individualId: individualId ?? this.individualId,
       );
 
   factory Child.fromJson(Map<String, dynamic> json) => Child(
@@ -105,8 +103,6 @@ class Child extends CustomUser {
         poolAccountID:
             json["pool_account_id"] == null ? null : json["pool_account_id"],
         dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
-        individualId:
-            json["individual_id"] == null ? null : json["individual_id"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -122,7 +118,6 @@ class Child extends CustomUser {
         "username": username,
         "email": email,
         "pool_account_id": poolAccountID,
-        "individual_id": individualId,
         "dob": dob.toIso8601String(),
       };
 
