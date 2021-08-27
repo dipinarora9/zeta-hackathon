@@ -1,6 +1,7 @@
 abstract class CustomUser {
   CustomUser({
     required this.userId,
+    required this.individualId,
     required this.createdDate,
     required this.username,
     required this.pan,
@@ -10,6 +11,7 @@ abstract class CustomUser {
   });
 
   final String userId;
+  final String individualId;
   final String email;
   final String username;
   final int createdDate;

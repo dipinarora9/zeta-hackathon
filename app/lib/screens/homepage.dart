@@ -53,6 +53,11 @@ class HomepageScreen extends StatelessWidget {
                 text: 'Add Child',
               ),
               AnalyticsWidget(),
+              CustomButton(
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(Routes.debugScreen),
+                text: 'Show debug screen',
+              ),
             ],
           ),
         ),

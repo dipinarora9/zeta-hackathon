@@ -12,114 +12,10 @@ const fusion_obj = {
 }
 // var messaging = admin.messaging();
 
-exports.pocketMoneyUpdater = functions.https.onRequest(async (request, response) => {
-    const firebase = require('firebase-admin');
-    let firebaseApp = firebase.initializeApp({});
-    var db = firebaseApp.firestore();
-    const time = getTimestamp(new Date());
-    // fetch docs of users(parent) with latest renewal date as today 12AM 
-    let users = await db.collection('users').where('latest_renewal_date', '==', time).get();
-    console.log(time);
-    for (let i = 0; i < users.size; i++) {
-        let userData = users.docs[i];
-
-        // fetch child of that parent id with renewal time stamp is today 12AM
-        let children = await db.collection('users').doc(userData.id).collection('children').where('pocket_money_details.renewal_date', '==', time).get();
-        let pocket_money_plans = {};
-
-        for (let j = 0; j < children.size; j++) {
-            let childData = children.docs[j].data();
-
-            let plan_id = childData.pocket_money_details.pocket_money_plan_id;
-
-            if (!(plan_id in pocket_money_plans)) {
-                // fetch pocket money plan
-                let pocketMoneyPlans = await db.collection('users').doc(userData.id).collection('pocket_money_plans').where('plan_id', '==', plan_id).get();
-                pocket_money_plans[plan_id] = pocketMoneyPlans.docs[0].data();
-            }
-            const plan = pocket_money_plans[plan_id];
-
-            let today = new Date();
-            // add balance update renewal date
-            today.setDate(today.getDate() + plan.recurring_days)
-            let accounts = await getAllAccountOfUser(userData.account_number);
-            console.log(accounts);
-            let creditAccountID = accounts.poolAccountID;
-            let debitAccountID = accounts.personalAccountID;
-
-            let transactionResult = await doTransaction(creditAccountID, debitAccountID, plan.amount);
-
-            console.log(transactionResult);
-            childData.balance += plan.amount;
-            childData.pocket_money_details.renewal_date = getTimestamp(today);
-            console.log(getTimestamp(today));
-            await db.collection('users').doc(userData.id).collection('children').doc(childData.user_id).set(childData);
-        }
-        if (children.size > 0) {
-            let childToGetMoneyNow = await db.collection('users').doc(userData.id).collection('children').orderBy('pocket_money_details.renewal_date').limit(1).get();
-
-            if (childToGetMoneyNow.docs.length == 0)
-                continue;
-            //1628533600
-            childToGetMoneyNow = childToGetMoneyNow.docs[0].data();
-
-            const latest_renewal_date = childToGetMoneyNow.pocket_money_details.renewal_date;
-            console.log(latest_renewal_date);
-            await db.collection('users').doc(userData.id).update({ "latest_renewal_date": latest_renewal_date });
-        }
-    }
-    functions.logger.info("Hello logs!", { structuredData: true });
-    response.send("Updated");
-});
-
-
-function getTimestamp(date) {
-    // fetch date convert to millisecond epoch 12 AM
-    let dd = String(date.getUTCDate()).padStart(2, '0');
-    let mm = String(date.getUTCMonth()).padStart(2, '0'); //January is 0!
-    let yyyy = date.getUTCFullYear();
-    const d = new Date(Date.UTC(yyyy, mm, dd, 0, 0, 0));
-    return d.getTime() / 1000;
-}
-
 function getCurrentServerTime() {
     return (new Date()).getTime();
 }
 
-
-async function getAllAccountOfUser(individualID) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let response = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/individuals/${individualID}/accounts`, {
-                method: 'GET',
-                headers: {
-                    'X-Zeta-AuthToken': fusion_obj.AUTH_KEY
-                },
-            });
-            let responseData = await response.json();
-
-            if (response.status !== 200) {
-                reject({ 'status': 'FAIL', 'message': responseData.message });
-            }
-            var poolAccountID = "";
-            var personalAccountID = "";
-            if (responseData.accounts[0].name === "Pool Account") {
-                poolAccountID = responseData.accounts[0].id;
-                personalAccountID = responseData.accounts[1].id;
-            } else {
-                poolAccountID = responseData.accounts[1].id;
-                personalAccountID = responseData.accounts[0].id;
-            }
-            resolve({
-                'status': 'SUCCESS',
-                'poolAccountID': poolAccountID,
-                'personalAccountID': personalAccountID
-            });
-        } catch (err) {
-            reject({ 'status': 'FAIL', 'message': err.message });
-        }
-    })
-}
 async function createNewIndividual(data) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -190,7 +86,6 @@ async function issueBundle(bundleName, accountHolderID, email) {
     });
 }
 
-
 // exports.ParentSignUp = functions.https.onRequest(async (request, response) => {
 exports.ParentSignUp = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
@@ -255,6 +150,7 @@ exports.ParentSignUp = functions.https.onCall(async (data, context) => {
         }
     })
     // response.send(res);
+    return res;
 });
 
 // exports.ChildSignUp = functions.https.onRequest(async (request, response) => {
@@ -320,8 +216,6 @@ exports.ChildSignUp = functions.https.onCall(async (data, context) => {
     });
     // response.send(res);
 });
-
-
 // exports.A2ATransaction = functions.https.onRequest(async (request, response) => {
 exports.A2ATransaction = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
@@ -350,6 +244,7 @@ exports.A2ATransaction = functions.https.onCall(async (data, context) => {
         }
     });
     // response.send(res);
+    // return res;
 });
 
 // exports.checkBalance = functions.https.onRequest(async (request, response) => {
@@ -396,7 +291,12 @@ exports.checkBalance = functions.https.onCall(async (data, conext) => {
     })
 
     // response.send(res);
+    // return res;
 });
+
+exports.getAccountDetails = functions.https.onRequest(async (request, response) => {
+    response.send("HEY");
+})
 
 async function doTransaction(creditAccountID, debitAccountID, amount) {
     return new Promise(async (resolve, reject) => {
@@ -464,4 +364,46 @@ async function doTransaction(creditAccountID, debitAccountID, amount) {
     });
 });*/
 
+// function getAccountIDViaAccountHolderID(accountHolderID) {
+//     return new Promise(async (resolve, reject) => {
+//         let accountIDResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/individuals/${accountHolderID}/accounts`, {
+//             method: 'GET',
+//             headers: {
+//                 'X-Zeta-AuthToken': fusion_obj.AUTH_KEY
+//             },
+//         })
+//         let responseObj = await accountHolderID.json();
+//         if (accountIDResponse.status !== 200) {
+//             reject('');
+//         }
+//         resolve(responseObj.id);
+//     });
+// }
+
+// async function getAccountIDsViaEmail(email) {
+//     let res = await new Promise(async (resolve, reject) => {
+//         try {
+//             let accountHolderIDResponse = await fetch(`${fusion_obj.BASE_URL}/api/v1/ifi/${fusion_obj.IFIID}/individualByVector/e/${email}`, {
+//                 method: 'GET',
+//                 headers: {
+//                     'X-Zeta-AuthToken': fusion_obj.AUTH_KEY
+//                 }
+//             });
+//             let status = accountHolderIDResponse.status;
+//             let accountHolderID = await accountHolderIDResponse.json();
+//             if (status !== 200) {
+//                 // error
+//                 reject('');
+//             }
+//             let response = await getAccountIDViaAccountHolderID(accountHolderID);
+//             if (response === '') reject('');
+//             else resolve(response);
+//         } catch (err) {
+//             // error
+//             reject('');
+//         }
+//     });
+//     console.log(res);
+//     return res;
+// }
 

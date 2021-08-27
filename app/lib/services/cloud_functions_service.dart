@@ -28,6 +28,7 @@ class CloudFunctionsService {
       return AppResponse(
           data: parent.copyWith(
         accountNumber: results.data['accountID'],
+        individualId: results.data['accountHolderID'],
       ));
     } on FirebaseException catch (e) {
       print('HERE IS IT error ${e.message}');
@@ -47,7 +48,11 @@ class CloudFunctionsService {
       print(results.data);
       if (results.data['status'].toString().toLowerCase() == 'fail')
         throw Exception(results.data['message']);
-      return AppResponse(data: child);
+      return AppResponse(
+        data: child.copyWith(
+          individualId: results.data['accountHolderID'],
+        ),
+      );
     } on FirebaseException catch (e) {
       return AppResponse(error: e.message);
     } catch (e) {

@@ -39,6 +39,7 @@ class SignUpController with ChangeNotifier {
     Parent parent = Parent(
       accountNumber: '',
       childrenIds: [],
+      individualId: '',
       mobile: int.parse(mobileController.text),
       userId: signUpResponse.data!,
       createdDate: DateTime.now().toUtc().millisecondsSinceEpoch,

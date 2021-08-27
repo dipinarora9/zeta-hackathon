@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
+import 'package:zeta_hackathon/widgets/debug_popup.dart';
 import 'package:zeta_hackathon/widgets/qr_widget.dart';
 
 import 'controllers/children_controller.dart';
@@ -37,6 +38,7 @@ class Routes {
   static const String transactionScreen = '/transactionScreen';
   static const String pocketMoneyPlans = '/pocketMoneyPlans';
   static const String qrScreen = '/qrCode';
+  static const String debugScreen = '/debugScreen';
 
   static final Map<String, WidgetBuilder> staticRoutes = {
     Routes.initialScreen: (context) {
@@ -100,6 +102,10 @@ class Routes {
             builder: (BuildContext context) => QRScreen(
               data: routeSettings.arguments as String,
             ),
+          );
+        case Routes.debugScreen:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => DebugPopUp(),
           );
         case Routes.modifyChild:
           return MaterialPageRoute(

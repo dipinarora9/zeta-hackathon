@@ -13,6 +13,7 @@ class Parent extends CustomUser {
     required this.mobile,
     this.latestRenewalDate,
     required userId,
+    required individualId,
     required createdDate,
     required pan,
     required isParent,
@@ -21,6 +22,7 @@ class Parent extends CustomUser {
     required dob,
   }) : super(
           userId: userId,
+          individualId: individualId,
           createdDate: createdDate,
           pan: pan,
           isParent: isParent,
@@ -44,6 +46,7 @@ class Parent extends CustomUser {
     String? username,
     bool? isParent,
     String? email,
+    String? individualId,
     int? latestRenewalDate,
     DateTime? dob,
   }) =>
@@ -59,6 +62,7 @@ class Parent extends CustomUser {
         email: email ?? this.email,
         latestRenewalDate: latestRenewalDate ?? this.latestRenewalDate,
         dob: dob ?? this.dob,
+        individualId: individualId ?? this.individualId,
       );
 
   factory Parent.fromJson(Map<String, dynamic> json) => Parent(
@@ -75,6 +79,8 @@ class Parent extends CustomUser {
         isParent: json["is_parent"] == null ? null : json["is_parent"],
         username: json["username"] == null ? null : json["username"],
         email: json["email"] == null ? null : json["email"],
+        individualId:
+            json["individual_id"] == null ? null : json["individual_id"],
         latestRenewalDate: json["latest_renewal_date"] == null
             ? null
             : json["latest_renewal_date"],
@@ -91,6 +97,7 @@ class Parent extends CustomUser {
         "username": username,
         "email": email,
         "latest_renewal_date": latestRenewalDate,
+        "individual_id": individualId,
         "dob": dob.toIso8601String(),
       };
 

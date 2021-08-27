@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:zeta_hackathon/controllers/homepage/child_homepage_controller.dart';
 import 'package:zeta_hackathon/widgets/analytics_widget.dart';
 import 'package:zeta_hackathon/widgets/balance_widget.dart';
+import 'package:zeta_hackathon/widgets/custom_button.dart';
 import 'package:zeta_hackathon/widgets/custom_scaffold.dart';
+
+import '../routes.dart';
 
 class ChildHomepageScreen extends StatelessWidget {
   ChildHomepageScreen({Key? key}) : super(key: key);
@@ -34,6 +37,11 @@ class ChildHomepageScreen extends StatelessWidget {
         children: [
           if (childHomepageController.child != null)
             BalanceWidget(child: childHomepageController.child!),
+          CustomButton(
+            onPressed: () =>
+                Navigator.of(context).pushNamed(Routes.debugScreen),
+            text: 'Show debug screen',
+          ),
           AnalyticsWidget(),
         ],
       ),
