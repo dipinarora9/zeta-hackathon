@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:zeta_hackathon/helpers/app_response.dart';
 import 'package:zeta_hackathon/helpers/ui_helper.dart';
 import 'package:zeta_hackathon/models/transaction.dart';
+import 'package:zeta_hackathon/routes.dart';
 import 'package:zeta_hackathon/services/cloud_functions_service.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 import 'package:zeta_hackathon/services/transaction_service.dart';
@@ -35,13 +36,8 @@ class TransactionController with ChangeNotifier {
       UIHelper.showToast(msg: response.error);
       return;
     }
-    AppResponse<bool> fusionResponse =
-        await cloudFunctionsService.doTransaction(response.data!);
 
-    if (fusionResponse.isSuccess()) {
-      UIHelper.showToast(msg: 'Paid successfully!');
-      Navigator.of(context).pop();
-    } else
-      UIHelper.showToast(msg: fusionResponse.error);
+    UIHelper.showToast(msg: 'Paid successfully!');
+    Navigator.of(context).pushReplacementNamed(Routes.homepageChild);
   }
 }

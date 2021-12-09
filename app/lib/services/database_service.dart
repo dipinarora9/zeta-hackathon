@@ -78,6 +78,23 @@ class DatabaseService {
     }
   }
 
+  Future<AppResponse<String>> fetchChildDetailsUsingEmail(
+      String parentId, String email) async {
+    try {
+      QuerySnapshot snapshot = await parentCollection
+          .doc(parentId)
+          .collection('children')
+          .where('email', isEqualTo: email)
+          .get();
+
+      return AppResponse(data: snapshot.docs.first['user_id']);
+    } on FirebaseException catch (e) {
+      return AppResponse(error: e.message);
+    } catch (e) {
+      return AppResponse(error: e.toString());
+    }
+  }
+
   Future<AppResponse<String>> addChildDetails(Child child) async {
     try {
       String userId = child.userId;

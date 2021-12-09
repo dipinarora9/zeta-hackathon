@@ -23,7 +23,7 @@ class BalanceWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Rs. ${child.balance}',
+                '${child.balance} ETH',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),

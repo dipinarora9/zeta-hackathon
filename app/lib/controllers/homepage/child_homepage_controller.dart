@@ -34,7 +34,7 @@ class ChildHomepageController with ChangeNotifier {
   scanQR(BuildContext context) async {
     AppResponse<UserObject> response = await scannerService.scannerService();
     if (response.isSuccess()) {
-      Navigator.of(context)
+      await Navigator.of(context)
           .pushNamed(Routes.transactionScreen, arguments: response.data!);
     } else
       UIHelper.showToast(msg: response.error);

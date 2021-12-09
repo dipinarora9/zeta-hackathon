@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeta_hackathon/models/transaction.dart';
 import 'package:zeta_hackathon/models/user/child.dart';
+import 'package:zeta_hackathon/screens/authentication/child_login.dart';
 import 'package:zeta_hackathon/services/identitiy_service.dart';
 import 'package:zeta_hackathon/widgets/debug_popup.dart';
 import 'package:zeta_hackathon/widgets/qr_widget.dart';
@@ -126,6 +127,13 @@ class Routes {
           return MaterialPageRoute(
             builder: (BuildContext context) => ChangeNotifierProvider(
               child: ParentLogin(),
+              create: (_) => di<LoginController>(),
+            ),
+          );
+        case Routes.loginChild:
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ChangeNotifierProvider(
+              child: ChildLogin(),
               create: (_) => di<LoginController>(),
             ),
           );

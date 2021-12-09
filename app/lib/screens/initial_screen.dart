@@ -23,7 +23,11 @@ class _InitialScreenState extends State<InitialScreen> {
           CustomButton(
             onPressed: () =>
                 Navigator.of(context).pushNamed(Routes.loginParent),
-            text: 'Parent',
+            text: 'Parent Login',
+          ),
+          CustomButton(
+            onPressed: () => Navigator.of(context).pushNamed(Routes.loginChild),
+            text: 'Child Login',
           ),
           CustomButton(
             onPressed: () => Navigator.of(context).pushNamed(Routes.signUp),
